@@ -3,12 +3,13 @@ import { servicios } from '~/data/servicios'
 import { equipo } from '~/data/equipo'
 import { testimonios } from '~/data/testimonios'
 import { WhatsAppButton } from '~/components/WhatsAppButton'
+import { VideoHero } from '~/components/VideoHero'
 
 // Familia: Elegante y Sofisticado
 // Composición: editorial, mucho white-space, serif grande, listas numeradas en vez de grids,
 // fotos verticales alternadas con texto. Inspirado en revistas de diseño y atelieres.
 
-export function EleganteTemplate() {
+export function EleganteTemplate({ video }: { video?: string }) {
   return (
     <main className="min-h-screen">
       {/* Header */}
@@ -27,25 +28,48 @@ export function EleganteTemplate() {
         </div>
       </header>
 
-      {/* Hero — centrado, editorial */}
-      <section className="max-w-4xl mx-auto px-8 py-32 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-[var(--fg-muted)] mb-8">
-          By {clinica.doctor}
-        </p>
-        <h1 className="display text-6xl md:text-8xl font-normal leading-[1.05] mb-10">
-          La sonrisa, <em className="text-[var(--accent)]">una obra</em> de arte personal.
-        </h1>
-        <p className="text-lg md:text-xl text-[var(--fg-muted)] max-w-2xl mx-auto leading-relaxed mb-12">
-          Diseñamos cada sonrisa como una pieza única. Combinamos tecnología de vanguardia con
-          la atención artesanal que mereces.
-        </p>
-        <div className="flex flex-wrap gap-4 justify-center">
-          <WhatsAppButton size="lg">Agendar consulta</WhatsAppButton>
-          <a href="#servicios" className="h-14 px-8 inline-flex items-center text-base text-[var(--fg)] hover:text-[var(--primary)]">
-            Conocer servicios →
-          </a>
-        </div>
-      </section>
+      {/* Hero */}
+      {video ? (
+        <VideoHero src={video} overlay="dark">
+          <div className="max-w-4xl mx-auto px-8 py-32 text-center text-white">
+            <p className="text-xs tracking-[0.3em] uppercase opacity-70 mb-8">
+              By {clinica.doctor}
+            </p>
+            <h1 className="display text-6xl md:text-8xl font-normal leading-[1.05] mb-10">
+              La sonrisa, <em className="text-[var(--accent)]">una obra</em> de arte personal.
+            </h1>
+            <p className="text-lg md:text-xl opacity-80 max-w-2xl mx-auto leading-relaxed text-justify mb-12">
+              Diseñamos cada sonrisa como una pieza única. Combinamos tecnología de vanguardia con
+              la atención artesanal que mereces.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <WhatsAppButton size="lg">Agendar consulta</WhatsAppButton>
+              <a href="#servicios" className="h-14 px-8 inline-flex items-center text-base text-white/80 hover:text-white">
+                Conocer servicios →
+              </a>
+            </div>
+          </div>
+        </VideoHero>
+      ) : (
+        <section className="max-w-4xl mx-auto px-8 py-32 text-center">
+          <p className="text-xs tracking-[0.3em] uppercase text-[var(--fg-muted)] mb-8">
+            By {clinica.doctor}
+          </p>
+          <h1 className="display text-6xl md:text-8xl font-normal leading-[1.05] mb-10">
+            La sonrisa, <em className="text-[var(--accent)]">una obra</em> de arte personal.
+          </h1>
+          <p className="text-lg md:text-xl text-[var(--fg-muted)] max-w-2xl mx-auto leading-relaxed text-justify mb-12">
+            Diseñamos cada sonrisa como una pieza única. Combinamos tecnología de vanguardia con
+            la atención artesanal que mereces.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <WhatsAppButton size="lg">Agendar consulta</WhatsAppButton>
+            <a href="#servicios" className="h-14 px-8 inline-flex items-center text-base text-[var(--fg)] hover:text-[var(--primary)]">
+              Conocer servicios →
+            </a>
+          </div>
+        </section>
+      )}
 
       {/* Filete decorativo */}
       <div className="max-w-4xl mx-auto px-8">
@@ -68,7 +92,7 @@ export function EleganteTemplate() {
                 {String(i + 1).padStart(2, '0')}
               </span>
               <h3 className="display text-2xl col-span-4">{s.nombre}</h3>
-              <p className="text-[var(--fg-muted)] col-span-7 leading-relaxed">
+              <p className="text-[var(--fg-muted)] col-span-7 leading-relaxed text-justify">
                 {s.descripcionLarga}
               </p>
             </li>
@@ -101,7 +125,7 @@ export function EleganteTemplate() {
                 <div className="md:[direction:ltr]">
                   <h3 className="display text-4xl mb-3">{d.nombre}</h3>
                   <p className="text-[var(--accent)] uppercase tracking-widest text-xs mb-6">{d.rol}</p>
-                  <p className="text-[var(--fg-muted)] leading-relaxed text-lg mb-6">{d.bio}</p>
+                  <p className="text-[var(--fg-muted)] leading-relaxed text-justify text-lg mb-6">{d.bio}</p>
                   <div className="flex flex-wrap gap-2">
                     {d.especialidades.map((e) => (
                       <span
@@ -128,7 +152,7 @@ export function EleganteTemplate() {
         <div className="grid md:grid-cols-2 gap-12">
           {testimonios.slice(0, 4).map((t) => (
             <figure key={t.nombre} className="border-l-2 border-[var(--accent)] pl-6">
-              <blockquote className="display text-2xl leading-relaxed italic mb-6">
+              <blockquote className="display text-2xl leading-relaxed text-justify italic mb-6">
                 "{t.texto}"
               </blockquote>
               <figcaption>

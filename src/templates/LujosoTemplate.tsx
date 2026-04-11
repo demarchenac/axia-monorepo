@@ -3,6 +3,7 @@ import { servicios } from '~/data/servicios'
 import { equipo } from '~/data/equipo'
 import { testimonios } from '~/data/testimonios'
 import { WhatsAppButton } from '~/components/WhatsAppButton'
+import { VideoHero } from '~/components/VideoHero'
 
 // Familia: Lujoso y Premium
 // Composición: dark mode dramático, hero asimétrico (texto izquierda + foto grande derecha),
@@ -10,7 +11,7 @@ import { WhatsAppButton } from '~/components/WhatsAppButton'
 
 const romanos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI']
 
-export function LujosoTemplate() {
+export function LujosoTemplate({ video }: { video?: string }) {
   return (
     <main className="min-h-screen">
       {/* Header — barra delgada con borde inferior dorado */}
@@ -35,18 +36,18 @@ export function LujosoTemplate() {
         </div>
       </header>
 
-      {/* Hero — split asimétrico */}
-      <section className="border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-12 min-h-[80vh]">
-          <div className="md:col-span-7 flex flex-col justify-center px-10 py-20 border-r border-[var(--border)]">
+      {/* Hero */}
+      {video ? (
+        <VideoHero src={video} overlay="dark">
+          <div className="max-w-5xl mx-auto px-10 py-32">
             <p className="text-xs tracking-[0.3em] uppercase text-[var(--accent)] mb-8">— Atelier Odontológico —</p>
-            <h1 className="display text-6xl md:text-8xl leading-[0.95] font-light italic mb-8">
+            <h1 className="display text-6xl md:text-8xl leading-[0.95] font-light italic mb-8 text-white">
               Una sonrisa<br />
               <span className="text-[var(--accent)]">extraordinaria</span><br />
               merece manos<br />
               extraordinarias.
             </h1>
-            <p className="text-lg text-[var(--fg-muted)] max-w-md mb-12 leading-relaxed">
+            <p className="text-lg text-white/70 max-w-md mb-12 leading-relaxed text-justify">
               Cada tratamiento en {clinica.nombre} es una obra hecha a medida. Tecnología
               alemana, materiales suizos, atención de boutique.
             </p>
@@ -57,19 +58,43 @@ export function LujosoTemplate() {
               </a>
             </div>
           </div>
-          <div className="md:col-span-5 relative bg-[var(--bg-alt)]">
-            <img
-              src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1000&q=85"
-              alt="Clínica Axia"
-              className="absolute inset-0 w-full h-full object-cover opacity-90"
-            />
-            <div className="absolute bottom-10 right-10 left-10 border border-[var(--accent)] p-6 backdrop-blur bg-[var(--bg)]/70">
-              <p className="display italic text-2xl mb-2">"Una experiencia digna de un hotel cinco estrellas."</p>
-              <p className="text-xs tracking-widest uppercase text-[var(--accent)]">— Vogue España, 2025</p>
+        </VideoHero>
+      ) : (
+        <section className="border-b border-[var(--border)]">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-12 min-h-[80vh]">
+            <div className="md:col-span-7 flex flex-col justify-center px-10 py-20 border-r border-[var(--border)]">
+              <p className="text-xs tracking-[0.3em] uppercase text-[var(--accent)] mb-8">— Atelier Odontológico —</p>
+              <h1 className="display text-6xl md:text-8xl leading-[0.95] font-light italic mb-8">
+                Una sonrisa<br />
+                <span className="text-[var(--accent)]">extraordinaria</span><br />
+                merece manos<br />
+                extraordinarias.
+              </h1>
+              <p className="text-lg text-[var(--fg-muted)] max-w-md mb-12 leading-relaxed text-justify">
+                Cada tratamiento en {clinica.nombre} es una obra hecha a medida. Tecnología
+                alemana, materiales suizos, atención de boutique.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <WhatsAppButton size="lg">Reservar valoración</WhatsAppButton>
+                <a href="#servicios" className="display italic text-lg text-[var(--accent)] underline-offset-8 hover:underline self-center">
+                  Conocer especialidades
+                </a>
+              </div>
+            </div>
+            <div className="md:col-span-5 relative bg-[var(--bg-alt)]">
+              <img
+                src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1000&q=85"
+                alt="Clínica Axia"
+                className="absolute inset-0 w-full h-full object-cover opacity-90"
+              />
+              <div className="absolute bottom-10 right-10 left-10 border border-[var(--accent)] p-6 backdrop-blur bg-[var(--bg)]/70">
+                <p className="display italic text-2xl mb-2">"Una experiencia digna de un hotel cinco estrellas."</p>
+                <p className="text-xs tracking-widest uppercase text-[var(--accent)]">— Vogue España, 2025</p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Servicios — números romanos */}
       <section id="servicios" className="max-w-7xl mx-auto px-10 py-32">
@@ -81,7 +106,7 @@ export function LujosoTemplate() {
             </h2>
           </div>
           <div className="md:col-span-7 md:col-start-6 flex items-end">
-            <p className="text-lg text-[var(--fg-muted)] leading-relaxed">
+            <p className="text-lg text-[var(--fg-muted)] leading-relaxed text-justify">
               Cada especialidad en Axia está liderada por un maestro reconocido en su campo. No
               externalizamos, no derivamos: lo que hacemos, lo hacemos en casa.
             </p>
@@ -97,7 +122,7 @@ export function LujosoTemplate() {
                 <span className="display italic text-4xl text-[var(--accent)] min-w-12">{romanos[i]}</span>
                 <div>
                   <h3 className="display text-3xl mb-3 italic">{s.nombre}</h3>
-                  <p className="text-[var(--fg-muted)] leading-relaxed">{s.descripcionLarga}</p>
+                  <p className="text-[var(--fg-muted)] leading-relaxed text-justify">{s.descripcionLarga}</p>
                 </div>
               </div>
             </article>
@@ -120,7 +145,7 @@ export function LujosoTemplate() {
                 </div>
                 <h3 className="display text-2xl italic mb-2">{d.nombre}</h3>
                 <p className="text-[var(--accent)] text-xs uppercase tracking-widest mb-4">{d.rol}</p>
-                <p className="text-[var(--fg-muted)] text-sm leading-relaxed">{d.bio}</p>
+                <p className="text-[var(--fg-muted)] text-sm leading-relaxed text-justify">{d.bio}</p>
               </div>
             ))}
           </div>
@@ -134,7 +159,7 @@ export function LujosoTemplate() {
           {testimonios.slice(0, 3).map((t) => (
             <figure key={t.nombre} className="text-center">
               <span className="display text-7xl text-[var(--accent)] leading-none">"</span>
-              <blockquote className="display text-3xl md:text-4xl italic leading-relaxed font-light mb-8 -mt-4">
+              <blockquote className="display text-3xl md:text-4xl italic leading-relaxed text-justify font-light mb-8 -mt-4">
                 {t.texto}
               </blockquote>
               <figcaption className="text-xs tracking-[0.25em] uppercase text-[var(--fg-muted)]">
@@ -153,7 +178,7 @@ export function LujosoTemplate() {
             <h2 className="display text-5xl md:text-6xl italic font-light leading-tight mb-8">
               Su sonrisa, nuestra obsesión.
             </h2>
-            <p className="text-lg text-[var(--fg-muted)] mb-10 leading-relaxed">
+            <p className="text-lg text-[var(--fg-muted)] mb-10 leading-relaxed text-justify">
               Atendemos por cita previa para garantizar la atención exclusiva que cada paciente merece.
             </p>
             <WhatsAppButton size="lg">Reservar valoración privada</WhatsAppButton>

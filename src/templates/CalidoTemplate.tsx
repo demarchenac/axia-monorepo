@@ -3,93 +3,128 @@ import { servicios } from '~/data/servicios'
 import { equipo } from '~/data/equipo'
 import { testimonios } from '~/data/testimonios'
 import { WhatsAppButton } from '~/components/WhatsAppButton'
+import { VideoHero } from '~/components/VideoHero'
 
 // Familia: Cálido y Amigable
 // Composición: redondeces extremas, blob shapes, hero con foto orgánica, copy informal en
 // segunda persona, cards muy redondeados con sombras suaves, tono familia.
 
-export function CalidoTemplate() {
+export function CalidoTemplate({ video }: { video?: string }) {
   return (
     <main className="min-h-screen">
       {/* Header redondeado y aireado */}
-      <header className="px-6 pt-6">
-        <div className="max-w-7xl mx-auto bg-[var(--card)] border border-[var(--border)] px-6 py-4 flex items-center justify-between" style={{ borderRadius: 'var(--radius)' }}>
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 flex items-center justify-center bg-[var(--primary)] text-[var(--primary-fg)] font-bold text-xl" style={{ borderRadius: 'calc(var(--radius) * 0.7)' }}>
-              ✦
+      {video ? (
+        <header className="absolute top-0 left-0 right-0 z-30 px-6 pt-6">
+          <div className="max-w-7xl mx-auto bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 flex items-center justify-between" style={{ borderRadius: 'var(--radius)' }}>
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 flex items-center justify-center bg-[var(--primary)] text-[var(--primary-fg)] font-bold text-xl" style={{ borderRadius: 'calc(var(--radius) * 0.7)' }}>
+                ✦
+              </div>
+              <div>
+                <div className="font-semibold text-lg leading-tight text-white">{clinica.nombre}</div>
+                <div className="text-xs text-white/60">{clinica.doctor}</div>
+              </div>
             </div>
-            <div>
-              <div className="font-semibold text-lg leading-tight">{clinica.nombre}</div>
-              <div className="text-xs text-[var(--fg-muted)]">¡Bienvenido a casa! 👋</div>
-            </div>
+            <nav className="hidden md:flex items-center gap-8 text-sm text-white/90">
+              <a href="#servicios" className="hover:text-white">Lo que hacemos</a>
+              <a href="#equipo" className="hover:text-white">Nuestro equipo</a>
+              <a href="#testimonios" className="hover:text-white">Historias</a>
+            </nav>
           </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm">
-            <a href="#servicios" className="hover:text-[var(--primary)]">Lo que hacemos</a>
-            <a href="#equipo" className="hover:text-[var(--primary)]">Nuestro equipo</a>
-            <a href="#testimonios" className="hover:text-[var(--primary)]">Historias</a>
-          </nav>
-          <WhatsAppButton size="sm">Hola 👋</WhatsAppButton>
-        </div>
-      </header>
-
-      {/* Hero — orgánico */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid md:grid-cols-12 gap-10 items-center">
-          <div className="md:col-span-7">
-            <div className="inline-flex items-center gap-2 bg-[var(--bg-alt)] px-4 py-2 mb-6" style={{ borderRadius: '999px' }}>
-              <span>✨</span>
-              <span className="text-sm font-medium">Atención cálida desde 2013</span>
+        </header>
+      ) : (
+        <header className="px-6 pt-6">
+          <div className="max-w-7xl mx-auto bg-[var(--card)] border border-[var(--border)] px-6 py-4 flex items-center justify-between" style={{ borderRadius: 'var(--radius)' }}>
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 flex items-center justify-center bg-[var(--primary)] text-[var(--primary-fg)] font-bold text-xl" style={{ borderRadius: 'calc(var(--radius) * 0.7)' }}>
+                ✦
+              </div>
+              <div>
+                <div className="font-semibold text-lg leading-tight">{clinica.nombre}</div>
+                <div className="text-xs text-[var(--fg-muted)]">{clinica.doctor}</div>
+              </div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.05] mb-6">
+            <nav className="hidden md:flex items-center gap-8 text-sm">
+              <a href="#servicios" className="hover:text-[var(--primary)]">Lo que hacemos</a>
+              <a href="#equipo" className="hover:text-[var(--primary)]">Nuestro equipo</a>
+              <a href="#testimonios" className="hover:text-[var(--primary)]">Historias</a>
+            </nav>
+          </div>
+        </header>
+      )}
+
+      {/* Hero */}
+      {video ? (
+        <VideoHero src={video} overlay="dark">
+          <div className="max-w-5xl mx-auto px-6 py-32">
+            <h1 className="text-5xl md:text-7xl font-bold leading-[1.05] mb-6 text-white">
               Acá no hay miedo al dentista. <br />
-              <span className="text-[var(--primary)]">Solo</span> sonrisas.
+              <span className="text-[var(--accent)]">Solo</span> sonrisas.
             </h1>
-            <p className="text-xl text-[var(--fg-muted)] mb-10 max-w-xl leading-relaxed">
+            <p className="text-xl text-white/80 mb-10 max-w-xl leading-relaxed text-justify">
               En {clinica.nombre} te recibimos como a alguien de la familia. Tomamos café juntos,
               te explicamos todo sin tecnicismos y cuidamos tu sonrisa con todo el cariño del mundo.
             </p>
             <div className="flex flex-wrap gap-4">
               <WhatsAppButton size="lg">Agendar mi visita</WhatsAppButton>
-              <a
-                href="#servicios"
-                className="h-14 px-8 inline-flex items-center bg-[var(--bg-alt)] text-[var(--fg)] hover:bg-[var(--accent)] hover:text-[var(--accent-fg)] transition-colors"
-                style={{ borderRadius: 'var(--radius)' }}
-              >
+              <a href="#servicios" className="h-14 px-8 inline-flex items-center bg-white/15 backdrop-blur text-white border border-white/30 hover:bg-white/25 transition-colors" style={{ borderRadius: 'var(--radius)' }}>
                 ¿Qué hacemos?
               </a>
             </div>
           </div>
-          <div className="md:col-span-5 relative">
-            <div className="absolute -top-8 -left-8 w-32 h-32 bg-[var(--accent)] opacity-30" style={{ borderRadius: '50%' }} />
-            <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-[var(--primary)] opacity-20" style={{ borderRadius: '50%' }} />
-            <img
-              src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=900&q=85"
-              alt="Familia sonriendo"
-              className="relative w-full aspect-square object-cover"
-              style={{ borderRadius: 'var(--radius)' }}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Pequeñas promesas */}
-      <section className="max-w-7xl mx-auto px-6 mb-20">
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            { e: '☕', t: 'Café de bienvenida', d: 'Llegas, te recibimos, conversamos.' },
-            { e: '👶', t: 'Amigos de los niños', d: 'Sin lágrimas, lo prometemos.' },
-            { e: '💬', t: 'Sin tecnicismos', d: 'Te explicamos como a un amigo.' },
-          ].map((c) => (
-            <div key={c.t} className="bg-[var(--card)] border border-[var(--border)] p-6 flex items-start gap-4" style={{ borderRadius: 'var(--radius)' }}>
-              <div className="text-4xl">{c.e}</div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">{c.t}</h3>
-                <p className="text-sm text-[var(--fg-muted)]">{c.d}</p>
+        </VideoHero>
+      ) : (
+        <section className="max-w-7xl mx-auto px-6 py-20">
+          <div className="grid md:grid-cols-12 gap-10 items-center">
+            <div className="md:col-span-7">
+              <div className="inline-flex items-center gap-2 bg-[var(--bg-alt)] px-4 py-2 mb-6" style={{ borderRadius: '999px' }}>
+                <span>✨</span>
+                <span className="text-sm font-medium">Atención cálida desde 2013</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.05] mb-6">
+                Acá no hay miedo al dentista. <br />
+                <span className="text-[var(--primary)]">Solo</span> sonrisas.
+              </h1>
+              <p className="text-xl text-[var(--fg-muted)] mb-10 max-w-xl leading-relaxed">
+                En {clinica.nombre} te recibimos como a alguien de la familia. Tomamos café juntos,
+                te explicamos todo sin tecnicismos y cuidamos tu sonrisa con todo el cariño del mundo.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <WhatsAppButton size="lg">Agendar mi visita</WhatsAppButton>
+                <a href="#servicios" className="h-14 px-8 inline-flex items-center bg-[var(--bg-alt)] text-[var(--fg)] hover:bg-[var(--accent)] hover:text-[var(--accent-fg)] transition-colors" style={{ borderRadius: 'var(--radius)' }}>
+                  ¿Qué hacemos?
+                </a>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="md:col-span-5 relative">
+              <div className="absolute -top-8 -left-8 w-32 h-32 bg-[var(--accent)] opacity-30" style={{ borderRadius: '50%' }} />
+              <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-[var(--primary)] opacity-20" style={{ borderRadius: '50%' }} />
+              <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=900&q=85" alt="Familia sonriendo" className="relative w-full aspect-square object-cover" style={{ borderRadius: 'var(--radius)' }} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Pequeñas promesas (solo sin video — con video van dentro del hero) */}
+      {!video && (
+        <section className="max-w-7xl mx-auto px-6 mt-16 mb-20">
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { e: '☕', t: 'Café de bienvenida', d: 'Llegas, te recibimos, conversamos.' },
+              { e: '👶', t: 'Amigos de los niños', d: 'Sin lágrimas, lo prometemos.' },
+              { e: '💬', t: 'Sin tecnicismos', d: 'Te explicamos como a un amigo.' },
+            ].map((c) => (
+              <div key={c.t} className="bg-[var(--card)] border border-[var(--border)] p-6 flex items-start gap-4" style={{ borderRadius: 'var(--radius)' }}>
+                <div className="text-4xl">{c.e}</div>
+                <div>
+                  <h3 className="font-bold text-lg mb-1">{c.t}</h3>
+                  <p className="text-sm text-[var(--fg-muted)]">{c.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Servicios — cards XL redondeados */}
       <section id="servicios" className="bg-[var(--bg-alt)] py-24">

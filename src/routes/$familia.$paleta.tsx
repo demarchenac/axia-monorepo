@@ -7,7 +7,7 @@ import { LujosoTemplate } from '~/templates/LujosoTemplate'
 import { ClinicoTemplate } from '~/templates/ClinicoTemplate'
 import { CalidoTemplate } from '~/templates/CalidoTemplate'
 
-const templates: Record<FamiliaSlug, () => React.JSX.Element> = {
+const templates: Record<FamiliaSlug, (props: { video?: string }) => React.JSX.Element> = {
   'elegante-y-sofisticado': EleganteTemplate,
   'lujoso-y-premium': LujosoTemplate,
   'clinico-y-profesional': ClinicoTemplate,
@@ -29,7 +29,7 @@ function VariantePage() {
   return (
     <ThemeProvider tokens={variante.tokens}>
       <BackToGallery />
-      <Template />
+      <Template video={variante.video} />
       <DemoBadge />
     </ThemeProvider>
   )

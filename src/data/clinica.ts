@@ -5,7 +5,8 @@ export const clinica = {
   whatsapp: '573043218666', // formato wa.me, sin +
   whatsappDisplay: '+57 304 321 8666',
   email: 'contacto@axiaodontologia.com',
-  direccion: 'Calle 100 #15-23, Bogotá, Colombia',
+  ciudad: 'Barranquilla',
+  direccion: 'Calle 84 #53-100, Barranquilla, Colombia',
   horario: 'Lun - Sáb · 8:00 a.m. — 7:00 p.m.',
   redes: {
     instagram: 'https://instagram.com/axiaodontologia',

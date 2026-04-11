@@ -9,7 +9,7 @@ export type Testimonio = {
 export const testimonios: Testimonio[] = [
   {
     nombre: 'María Fernanda L.',
-    ciudad: 'Bogotá, Colombia',
+    ciudad: 'Barranquilla, Colombia',
     servicio: 'Diseño de Sonrisa',
     texto:
       'Jamás imaginé sonreír así. El Dr. Francisco escuchó cada detalle de lo que quería y el resultado superó todas mis expectativas. Es como tener una sonrisa nueva que parece siempre haber sido mía.',
@@ -33,7 +33,7 @@ export const testimonios: Testimonio[] = [
   },
   {
     nombre: 'Andrés Pérez',
-    ciudad: 'Bogotá, Colombia',
+    ciudad: 'Barranquilla, Colombia',
     servicio: 'Rehabilitación Oral',
     texto:
       'Llegué con un caso complejo después de años evitando al dentista. El equipo de Axia me devolvió la confianza para volver a sonreír sin tapar mi boca. Cambió mi vida.',

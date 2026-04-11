@@ -10,7 +10,7 @@ export const equipo: Doctor[] = [
   {
     nombre: 'Dr. Francisco Díaz',
     rol: 'Director Médico · Rehabilitación Oral',
-    bio: 'Especialista en rehabilitación oral con más de 12 años de experiencia. Fundador de Axia Odontología y referente en diseño de sonrisa en Bogotá.',
+    bio: 'Especialista en rehabilitación oral con más de 12 años de experiencia. Fundador de Axia Odontología y referente en diseño de sonrisa en Barranquilla.',
     foto: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&q=80',
     especialidades: ['Diseño de Sonrisa', 'Implantes', 'Rehabilitación Oral'],
   },

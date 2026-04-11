@@ -30,6 +30,7 @@ export type Variante = {
   label: string
   descripcion: string
   tokens: ThemeTokens
+  video?: string // path to video file in /public/videos/
 }
 
 import { eleganteVariantes } from './elegante'

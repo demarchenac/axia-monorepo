@@ -3,6 +3,7 @@ import { servicios } from '~/data/servicios'
 import { equipo } from '~/data/equipo'
 import { testimonios } from '~/data/testimonios'
 import { WhatsAppButton } from '~/components/WhatsAppButton'
+import { VideoHero } from '~/components/VideoHero'
 
 // Familia: Clínico y Profesional
 // Composición: layout estructurado con stats arriba, hero con foto institucional,
@@ -15,7 +16,7 @@ const stats = [
   { num: '4.9★', label: 'Calificación Google' },
 ]
 
-export function ClinicoTemplate() {
+export function ClinicoTemplate({ video }: { video?: string }) {
   return (
     <main className="min-h-screen">
       {/* Top bar info */}
@@ -53,51 +54,71 @@ export function ClinicoTemplate() {
         </div>
       </header>
 
-      {/* Hero — split estructurado con badges de confianza */}
-      <section className="bg-[var(--bg)]">
-        <div className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--bg-alt)] text-xs font-medium text-[var(--primary)] mb-6">
+      {/* Hero */}
+      {video ? (
+        <VideoHero src={video} overlay="dark">
+          <div className="max-w-5xl mx-auto px-6 py-24">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur text-xs font-medium text-white mb-6">
               <span className="h-2 w-2 rounded-full bg-[var(--accent)]"></span>
               Atención certificada · Tecnología de vanguardia
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold leading-[1.05] mb-6">
-              Salud dental con la <span className="text-[var(--primary)]">precisión</span> que mereces.
+            <h1 className="text-5xl md:text-6xl font-bold leading-[1.05] mb-6 text-white">
+              Salud dental con la <span className="text-[var(--accent)]">precisión</span> que mereces.
             </h1>
-            <p className="text-lg text-[var(--fg-muted)] mb-8 leading-relaxed">
-              {clinica.nombre} reúne especialistas certificados, tecnología de punta y un protocolo
+            <p className="text-lg text-white/80 mb-8 leading-relaxed text-justify max-w-2xl">
+              {clinica.nombre} reúne en Barranquilla especialistas certificados, tecnología de punta y un protocolo
               de atención centrado en ti. Resultados clínicos comprobables en cada visita.
             </p>
             <div className="flex flex-wrap gap-3">
               <WhatsAppButton size="lg">Agendar consulta</WhatsAppButton>
-              <a
-                href="#servicios"
-                className="h-14 px-8 inline-flex items-center text-base font-medium text-[var(--primary)] border border-[var(--border)] hover:bg-[var(--bg-alt)]"
-                style={{ borderRadius: 'var(--radius)' }}
-              >
+              <a href="#servicios" className="h-14 px-8 inline-flex items-center text-base font-medium text-white border border-white/30 hover:bg-white/10" style={{ borderRadius: 'var(--radius)' }}>
                 Ver tratamientos
               </a>
             </div>
-            <div className="flex items-center gap-6 mt-10 text-sm text-[var(--fg-muted)]">
-              <div className="flex items-center gap-2">⭐⭐⭐⭐⭐ <strong className="text-[var(--fg)]">4.9</strong> en Google</div>
+            <div className="flex items-center gap-6 mt-10 text-sm text-white/70">
+              <div className="flex items-center gap-2">⭐⭐⭐⭐⭐ <strong className="text-white">4.9</strong> en Google</div>
               <div>·</div>
               <div>+8.500 pacientes</div>
             </div>
           </div>
-          <div className="relative">
-            <img
-              src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900&q=85"
-              alt="Equipo médico Axia"
-              className="w-full aspect-[4/5] object-cover"
-              style={{ borderRadius: 'var(--radius)' }}
-            />
-            <div className="absolute -bottom-6 -left-6 bg-[var(--card)] border border-[var(--border)] p-5 shadow-xl" style={{ borderRadius: 'var(--radius)' }}>
-              <div className="text-3xl font-bold text-[var(--primary)]">12+</div>
-              <div className="text-xs text-[var(--fg-muted)] uppercase tracking-wider">Años cuidando sonrisas</div>
+        </VideoHero>
+      ) : (
+        <section className="bg-[var(--bg)]">
+          <div className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--bg-alt)] text-xs font-medium text-[var(--primary)] mb-6">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)]"></span>
+                Atención certificada · Tecnología de vanguardia
+              </div>
+              <h1 className="text-5xl md:text-6xl font-bold leading-[1.05] mb-6">
+                Salud dental con la <span className="text-[var(--primary)]">precisión</span> que mereces.
+              </h1>
+              <p className="text-lg text-[var(--fg-muted)] mb-8 leading-relaxed text-justify">
+                {clinica.nombre} reúne especialistas certificados, tecnología de punta y un protocolo
+                de atención centrado en ti. Resultados clínicos comprobables en cada visita.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <WhatsAppButton size="lg">Agendar consulta</WhatsAppButton>
+                <a href="#servicios" className="h-14 px-8 inline-flex items-center text-base font-medium text-[var(--primary)] border border-[var(--border)] hover:bg-[var(--bg-alt)]" style={{ borderRadius: 'var(--radius)' }}>
+                  Ver tratamientos
+                </a>
+              </div>
+              <div className="flex items-center gap-6 mt-10 text-sm text-[var(--fg-muted)]">
+                <div className="flex items-center gap-2">⭐⭐⭐⭐⭐ <strong className="text-[var(--fg)]">4.9</strong> en Google</div>
+                <div>·</div>
+                <div>+8.500 pacientes</div>
+              </div>
+            </div>
+            <div className="relative">
+              <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900&q=85" alt="Equipo médico Axia" className="w-full aspect-[4/5] object-cover" style={{ borderRadius: 'var(--radius)' }} />
+              <div className="absolute -bottom-6 -left-6 bg-[var(--card)] border border-[var(--border)] p-5 shadow-xl" style={{ borderRadius: 'var(--radius)' }}>
+                <div className="text-3xl font-bold text-[var(--primary)]">12+</div>
+                <div className="text-xs text-[var(--fg-muted)] uppercase tracking-wider">Años cuidando sonrisas</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Stats bar */}
       <section className="border-y border-[var(--border)] bg-[var(--bg-alt)]">
@@ -133,7 +154,7 @@ export function ClinicoTemplate() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">{s.nombre}</h3>
-              <p className="text-[var(--fg-muted)] text-sm leading-relaxed mb-4">{s.descripcionLarga}</p>
+              <p className="text-[var(--fg-muted)] text-sm leading-relaxed text-justify mb-4">{s.descripcionLarga}</p>
               <WhatsAppButton servicio={s.nombre} variant="ghost" size="sm">
                 Consultar →
               </WhatsAppButton>
@@ -156,7 +177,7 @@ export function ClinicoTemplate() {
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-1">{d.nombre}</h3>
                   <p className="text-sm text-[var(--primary)] font-medium mb-3">{d.rol}</p>
-                  <p className="text-sm text-[var(--fg-muted)] leading-relaxed mb-4">{d.bio}</p>
+                  <p className="text-sm text-[var(--fg-muted)] leading-relaxed text-justify mb-4">{d.bio}</p>
                   <div className="flex flex-wrap gap-2">
                     {d.especialidades.map((e) => (
                       <span key={e} className="text-[10px] uppercase tracking-wider px-2 py-1 bg-[var(--bg-alt)] text-[var(--fg-muted)] font-medium" style={{ borderRadius: 'calc(var(--radius) / 2)' }}>
@@ -181,7 +202,7 @@ export function ClinicoTemplate() {
           {testimonios.map((t) => (
             <figure key={t.nombre} className="border border-[var(--border)] bg-[var(--card)] p-6" style={{ borderRadius: 'var(--radius)' }}>
               <div className="text-[var(--accent)] mb-4">{'★'.repeat(t.rating)}</div>
-              <blockquote className="text-[var(--fg)] leading-relaxed mb-6">"{t.texto}"</blockquote>
+              <blockquote className="text-[var(--fg)] leading-relaxed text-justify mb-6">"{t.texto}"</blockquote>
               <figcaption className="border-t border-[var(--border)] pt-4">
                 <div className="font-semibold">{t.nombre}</div>
                 <div className="text-sm text-[var(--fg-muted)]">{t.ciudad} · {t.servicio}</div>
