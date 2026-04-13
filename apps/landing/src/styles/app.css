@@ -1,0 +1,51 @@
+@import 'tailwindcss' source('../');
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/500.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource/geist-sans/700.css';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/700.css';
+
+@theme {
+  --font-sans: 'Geist Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Themed area: each variant page wraps content in [data-theme] which sets these */
+[data-theme] {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body, var(--font-sans));
+}
+
+[data-theme] .display {
+  font-family: var(--font-display, var(--font-sans));
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scrollbar-width: none; /* Firefox */
+  }
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Edge, Safari */
+  }
+  html, body {
+    @apply antialiased;
+  }
+  body {
+    margin: 0;
+    background: #0a0a0a;
+    color: #fafafa;
+    font-family: var(--font-sans);
+  }
+}
