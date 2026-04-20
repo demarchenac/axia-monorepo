@@ -5,13 +5,15 @@ import { DemoBadge } from '~/components/DemoBadge'
 import { EleganteTemplate } from '~/templates/EleganteTemplate'
 import { LujosoTemplate } from '~/templates/LujosoTemplate'
 import { ClinicoTemplate } from '~/templates/ClinicoTemplate'
-import { CalidoTemplate } from '~/templates/CalidoTemplate'
+import { TokenProvider } from '@talvu/ui/components/TokenProvider'
+import { SectionRenderer } from '@talvu/ui/components/SectionRenderer'
+import { ScrollIndicator } from '~/components/ScrollIndicator'
+import { buildCalidoSections } from '~/data/calido-sections'
 
-const templates: Record<FamiliaSlug, (props: { video?: string }) => React.JSX.Element> = {
+const templates: Record<string, (props: { video?: string }) => React.JSX.Element> = {
   'elegante-y-sofisticado': EleganteTemplate,
   'lujoso-y-premium': LujosoTemplate,
   'clinico-y-profesional': ClinicoTemplate,
-  'calido-y-amigable': CalidoTemplate,
 }
 
 export const Route = createFileRoute('/$familia/$paleta')({
@@ -25,6 +27,19 @@ export const Route = createFileRoute('/$familia/$paleta')({
 
 function VariantePage() {
   const { variante } = Route.useLoaderData()
+
+  if (variante.familia === 'calido-y-amigable') {
+    const sections = buildCalidoSections(variante.video)
+    return (
+      <TokenProvider tokens={variante.tokens}>
+        <BackToGallery />
+        <SectionRenderer sections={sections} locale="es" />
+        <ScrollIndicator />
+        <DemoBadge />
+      </TokenProvider>
+    )
+  }
+
   const Template = templates[variante.familia]
   return (
     <ThemeProvider tokens={variante.tokens}>

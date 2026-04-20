@@ -1,39 +1,5 @@
-// Theme tokens for the 4 visual families × 3 palettes each.
-// Each theme is injected as inline CSS variables on a [data-theme] wrapper.
-
-export type ThemeTokens = {
-  '--bg': string
-  '--bg-alt': string
-  '--fg': string
-  '--fg-muted': string
-  '--primary': string
-  '--primary-fg': string
-  '--accent': string
-  '--accent-fg': string
-  '--border': string
-  '--card': string
-  '--card-fg': string
-  '--radius': string
-  '--font-body': string
-  '--font-display': string
-  '--scrollbar-thumb'?: string
-  '--scrollbar-thumb-hover'?: string
-}
-
-export type FamiliaSlug =
-  | 'elegante-y-sofisticado'
-  | 'lujoso-y-premium'
-  | 'clinico-y-profesional'
-  | 'calido-y-amigable'
-
-export type Variante = {
-  familia: FamiliaSlug
-  paleta: string
-  label: string
-  descripcion: string
-  tokens: ThemeTokens
-  video?: string // path to video file in /public/videos/
-}
+import type { ThemeTokens, FamiliaSlug, Variante } from '@talvu/ui/lib/theme-tokens'
+export type { ThemeTokens, FamiliaSlug, Variante }
 
 import { eleganteVariantes } from './elegante'
 import { lujosoVariantes } from './lujoso'

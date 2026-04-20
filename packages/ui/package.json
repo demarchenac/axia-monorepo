@@ -31,6 +31,8 @@
     "./globals.css": "./src/styles/globals.css",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./hooks/*": "./src/hooks/*.ts",
+    "./sections/types": "./src/sections/types.ts",
+    "./sections/*": "./src/sections/*/index.ts"
   }
 }

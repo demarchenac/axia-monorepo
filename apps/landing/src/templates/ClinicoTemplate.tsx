@@ -3,7 +3,7 @@ import { servicios } from '~/data/servicios'
 import { equipo } from '~/data/equipo'
 import { testimonios } from '~/data/testimonios'
 import { WhatsAppButton } from '~/components/WhatsAppButton'
-import { VideoHero } from '~/components/VideoHero'
+import { VideoHero } from '@talvu/ui/components/VideoHero'
 
 // Familia: Clínico y Profesional
 // Composición: layout estructurado con stats arriba, hero con foto institucional,
