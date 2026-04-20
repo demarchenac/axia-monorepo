@@ -1,12 +1,12 @@
 {
-  "name": "axia",
+  "name": "talvu",
   "private": true,
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "dev:landing": "turbo dev --filter=@axia/landing",
-    "dev:bot": "turbo dev --filter=@axia/bot",
-    "dev:portal": "turbo dev --filter=@axia/portal",
+    "dev:landing": "turbo dev --filter=@talvu/landing",
+    "dev:bot": "turbo dev --filter=@talvu/bot",
+    "dev:portal": "turbo dev --filter=@talvu/portal",
     "dev:convex": "npx convex dev",
     "prepare": "husky",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",

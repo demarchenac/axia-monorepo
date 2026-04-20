@@ -1,5 +1,5 @@
 {
-  "name": "@axia/landing",
+  "name": "@talvu/landing",
   "private": true,
   "sideEffects": false,
   "type": "module",

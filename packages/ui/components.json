@@ -11,11 +11,11 @@
   },
   "iconLibrary": "phosphor",
   "aliases": {
-    "components": "@axia/ui/components",
-    "utils": "@axia/ui/lib/utils",
-    "hooks": "@axia/ui/hooks",
-    "lib": "@axia/ui/lib",
-    "ui": "@axia/ui/components"
+    "components": "@talvu/ui/components",
+    "utils": "@talvu/ui/lib/utils",
+    "hooks": "@talvu/ui/hooks",
+    "lib": "@talvu/ui/lib",
+    "ui": "@talvu/ui/components"
   },
   "rtl": false,
   "menuColor": "default-translucent",
