@@ -38,6 +38,8 @@ export const create = mutation({
     defaultLocale: v.string(),
     enabledLocales: v.array(v.string()),
     status: tenantStatus,
+    tagline: v.optional(v.any()),
+    description: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -99,6 +101,14 @@ export const validatePreviewToken = query({
   },
 });
 
+const taxRegime = v.union(
+  v.literal("simplificado"),
+  v.literal("comun"),
+  v.literal("no_responsable_iva"),
+  v.literal("gran_contribuyente"),
+  v.literal("other"),
+);
+
 export const update = mutation({
   args: {
     id: v.id("tenants"),
@@ -108,10 +118,28 @@ export const update = mutation({
     industry: v.optional(v.string()),
     country: v.optional(v.string()),
     status: v.optional(tenantStatus),
-    logoUrl: v.optional(v.string()),
-    primaryColor: v.optional(v.string()),
+    defaultLocale: v.optional(v.string()),
+    enabledLocales: v.optional(v.array(v.string())),
+    hasRealLogo: v.optional(v.boolean()),
+    hasRealPhotos: v.optional(v.boolean()),
+    reviewRequestsEnabled: v.optional(v.boolean()),
     tagline: v.optional(v.any()),
     description: v.optional(v.any()),
+    logoUrl: v.optional(v.string()),
+    primaryColor: v.optional(v.string()),
+    headerVariant: v.optional(v.string()),
+    footerVariant: v.optional(v.string()),
+    legalName: v.optional(v.string()),
+    nit: v.optional(v.string()),
+    taxRegime: v.optional(taxRegime),
+    economicActivityCode: v.optional(v.string()),
+    legalRepresentative: v.optional(
+      v.object({
+        name: v.string(),
+        documentType: v.string(),
+        documentNumber: v.string(),
+      }),
+    ),
   },
   handler: async (ctx, { id, ...fields }) => {
     const filtered = Object.fromEntries(

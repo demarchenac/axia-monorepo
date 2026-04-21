@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TSlugRouteImport } from './routes/t/$slug'
 import { Route as FamiliaPaletaRouteImport } from './routes/$familia.$paleta'
+import { Route as TSlugPresetsRouteImport } from './routes/t/$slug.presets'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,43 @@ const FamiliaPaletaRoute = FamiliaPaletaRouteImport.update({
   path: '/$familia/$paleta',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TSlugPresetsRoute = TSlugPresetsRouteImport.update({
+  id: '/presets',
+  path: '/presets',
+  getParentRoute: () => TSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
-  '/t/$slug': typeof TSlugRoute
+  '/t/$slug': typeof TSlugRouteWithChildren
+  '/t/$slug/presets': typeof TSlugPresetsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
-  '/t/$slug': typeof TSlugRoute
+  '/t/$slug': typeof TSlugRouteWithChildren
+  '/t/$slug/presets': typeof TSlugPresetsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
-  '/t/$slug': typeof TSlugRoute
+  '/t/$slug': typeof TSlugRouteWithChildren
+  '/t/$slug/presets': typeof TSlugPresetsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$familia/$paleta' | '/t/$slug'
+  fullPaths: '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$familia/$paleta' | '/t/$slug'
-  id: '__root__' | '/' | '/$familia/$paleta' | '/t/$slug'
+  to: '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
+  id: '__root__' | '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FamiliaPaletaRoute: typeof FamiliaPaletaRoute
-  TSlugRoute: typeof TSlugRoute
+  TSlugRoute: typeof TSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -82,13 +91,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamiliaPaletaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/t/$slug/presets': {
+      id: '/t/$slug/presets'
+      path: '/presets'
+      fullPath: '/t/$slug/presets'
+      preLoaderRoute: typeof TSlugPresetsRouteImport
+      parentRoute: typeof TSlugRoute
+    }
   }
 }
+
+interface TSlugRouteChildren {
+  TSlugPresetsRoute: typeof TSlugPresetsRoute
+}
+
+const TSlugRouteChildren: TSlugRouteChildren = {
+  TSlugPresetsRoute: TSlugPresetsRoute,
+}
+
+const TSlugRouteWithChildren = TSlugRoute._addFileChildren(TSlugRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FamiliaPaletaRoute: FamiliaPaletaRoute,
-  TSlugRoute: TSlugRoute,
+  TSlugRoute: TSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
