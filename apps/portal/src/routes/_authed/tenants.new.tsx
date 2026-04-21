@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
-import { api } from '../../../../../convex/_generated/api'
+import { api } from '@talvu/db'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/_authed/tenants/new')({

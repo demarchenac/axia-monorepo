@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from 'convex/react'
-import { api } from '../../../../convex/_generated/api'
+import { api } from '@talvu/db'
 import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
 import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
 import { ScrollIndicator } from '~/components/ScrollIndicator'

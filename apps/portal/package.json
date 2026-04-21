@@ -10,6 +10,7 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
+    "@talvu/db": "workspace:*",
     "@talvu/ui": "workspace:*",
     "@workos/authkit-tanstack-react-start": "^0.6.0",
     "@workos-inc/node": "^9.0.0",

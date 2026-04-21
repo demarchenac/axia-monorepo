@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation } from 'convex/react'
 import { useNavigate } from '@tanstack/react-router'
-import { api } from '../../../../convex/_generated/api'
+import { api } from '@talvu/db'
 import { buildCalidoSections } from '~/data/calido-sections'
 import { buildEleganteSections } from '~/data/elegante-sections'
 import { buildLujosoSections } from '~/data/lujoso-sections'

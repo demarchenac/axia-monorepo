@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@talvu/blocks": "workspace:*",
+    "@talvu/db": "workspace:*",
     "@talvu/ui": "workspace:*",
     "convex": "^1.35.1",
     "@fontsource/cormorant-garamond": "^5.2.11",

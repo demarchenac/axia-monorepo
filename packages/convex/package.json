@@ -1,0 +1,17 @@
+{
+  "name": "@talvu/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./schema": "./convex/schema.ts"
+  },
+  "scripts": {
+    "dev": "convex dev",
+    "deploy": "convex deploy"
+  },
+  "dependencies": {
+    "convex": "^1.35.1"
+  }
+}

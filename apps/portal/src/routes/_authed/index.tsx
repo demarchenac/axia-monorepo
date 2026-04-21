@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
-import { api } from '../../../../../convex/_generated/api'
+import { api } from '@talvu/db'
 
 export const Route = createFileRoute('/_authed/')({
   component: Dashboard,
