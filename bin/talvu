@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+CONVEX_DIR="$ROOT/packages/convex"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+usage() {
+  echo -e "${BOLD}talvu${RESET} — CLI del monorepo Talvu\n"
+  echo -e "${BOLD}USO${RESET}"
+  echo -e "  talvu <comando> [opciones]\n"
+  echo -e "${BOLD}COMANDOS${RESET}"
+  echo -e "  ${CYAN}dev${RESET}                  Levanta todo (landing, portal, convex, bot)"
+  echo -e "  ${CYAN}dev:landing${RESET}          Solo el landing (:3000)"
+  echo -e "  ${CYAN}dev:portal${RESET}           Solo el portal admin (:3001)"
+  echo -e "  ${CYAN}dev:db${RESET}               Solo Convex dev server"
+  echo ""
+  echo -e "  ${CYAN}db:seed${RESET}              Seed completo (tenant Axia + presets)"
+  echo -e "  ${CYAN}db:seed:tenant${RESET}       Seed solo tenant Axia"
+  echo -e "  ${CYAN}db:seed:presets${RESET}      Seed solo presets de diseño"
+  echo -e "  ${CYAN}db:deploy${RESET}            Deploy funciones a producción"
+  echo -e "  ${CYAN}db:run${RESET} <fn>          Ejecuta una función de Convex (ej: db:run tenants:list)"
+  echo -e "  ${CYAN}db:dashboard${RESET}         Abre el dashboard de Convex"
+  echo ""
+  echo -e "  ${CYAN}build${RESET}                Build de todos los packages"
+  echo -e "  ${CYAN}typecheck${RESET}            Typecheck de todos los packages"
+  echo ""
+  echo -e "  ${CYAN}help${RESET}                 Muestra esta ayuda"
+}
+
+log() { echo -e "${GREEN}▸${RESET} $1"; }
+err() { echo -e "${RED}✗${RESET} $1" >&2; exit 1; }
+
+convex_run() {
+  cd "$CONVEX_DIR" && npx convex run "$@"
+}
+
+case "${1:-help}" in
+  dev)
+    cd "$ROOT" && pnpm dev
+    ;;
+  dev:landing)
+    cd "$ROOT" && pnpm dev:landing
+    ;;
+  dev:portal)
+    cd "$ROOT" && pnpm dev:portal
+    ;;
+  dev:db)
+    cd "$CONVEX_DIR" && npx convex dev
+    ;;
+  db:seed)
+    log "Seeding tenant Axia..."
+    convex_run seed:run
+    log "Seeding presets..."
+    convex_run seedPresets:run
+    log "Seed completo."
+    ;;
+  db:seed:tenant)
+    log "Seeding tenant Axia..."
+    convex_run seed:run
+    ;;
+  db:seed:presets)
+    log "Seeding presets..."
+    convex_run seedPresets:run
+    ;;
+  db:deploy)
+    log "Deploying Convex functions..."
+    cd "$CONVEX_DIR" && npx convex deploy
+    ;;
+  db:run)
+    shift
+    [[ $# -eq 0 ]] && err "Falta el nombre de la función. Ej: talvu db:run tenants:list"
+    convex_run "$@"
+    ;;
+  db:dashboard)
+    cd "$CONVEX_DIR" && npx convex dashboard
+    ;;
+  build)
+    cd "$ROOT" && pnpm build
+    ;;
+  typecheck)
+    cd "$ROOT" && pnpm turbo typecheck
+    ;;
+  help|--help|-h)
+    usage
+    ;;
+  *)
+    err "Comando desconocido: $1\n\nUsa ${BOLD}talvu help${RESET} para ver los comandos disponibles."
+    ;;
+esac

@@ -1,7 +1,11 @@
 {
   "name": "talvu",
   "private": true,
+  "bin": {
+    "talvu": "./bin/talvu"
+  },
   "scripts": {
+    "talvu": "./bin/talvu",
     "dev": "turbo dev",
     "build": "turbo build",
     "dev:landing": "turbo dev --filter=@talvu/landing",
