@@ -7,7 +7,6 @@
     "dev:landing": "turbo dev --filter=@talvu/landing",
     "dev:bot": "turbo dev --filter=@talvu/bot",
     "dev:portal": "turbo dev --filter=@talvu/portal",
-    "dev:convex": "npx convex dev",
     "prepare": "husky",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "changelog:all": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
@@ -22,7 +21,5 @@
     "typescript": "^5.7.0"
   },
   "packageManager": "pnpm@10.28.0",
-  "dependencies": {
-    "convex": "^1.35.1"
-  }
+  "dependencies": {}
 }
