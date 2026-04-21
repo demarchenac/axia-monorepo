@@ -11,6 +11,9 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  ssr: {
+    noExternal: ['@talvu/db'],
+  },
   plugins: [
     tailwindcss(),
     tanstackStart({
