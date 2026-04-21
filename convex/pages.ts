@@ -131,3 +131,58 @@ export const deleteSection = mutation({
     await ctx.db.delete(sectionId);
   },
 });
+
+export const applyFullPage = mutation({
+  args: {
+    tenantId: v.id("tenants"),
+    sections: v.array(
+      v.object({
+        type: v.string(),
+        variant: v.string(),
+        order: v.number(),
+        content: v.any(),
+        visible: v.boolean(),
+      }),
+    ),
+  },
+  handler: async (ctx, { tenantId, sections }) => {
+    const now = Date.now();
+
+    let page = await ctx.db
+      .query("tenantPages")
+      .withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
+      .first();
+
+    if (page) {
+      const existing = await ctx.db
+        .query("pageSections")
+        .withIndex("by_page_order", (q) => q.eq("pageId", page!._id))
+        .collect();
+      await Promise.all(existing.map((s) => ctx.db.delete(s._id)));
+      await ctx.db.patch(page._id, { updatedAt: now });
+    } else {
+      const pageId = await ctx.db.insert("tenantPages", {
+        tenantId,
+        slug: "home",
+        createdAt: now,
+        updatedAt: now,
+      });
+      page = (await ctx.db.get(pageId))!;
+    }
+
+    for (const s of sections) {
+      await ctx.db.insert("pageSections", {
+        pageId: page._id,
+        type: s.type,
+        variant: s.variant,
+        order: s.order,
+        content: s.content,
+        visible: s.visible,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    return page._id;
+  },
+});

@@ -1,14 +1,24 @@
 /// <reference types="vite/client" />
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
+
+let convexClient: ConvexReactClient | null = null
+function getConvexClient() {
+  if (!convexClient && typeof window !== 'undefined') {
+    convexClient = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string)
+  }
+  return convexClient
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -26,8 +36,21 @@ export const Route = createRootRoute({
   }),
   errorComponent: DefaultCatchBoundary,
   notFoundComponent: () => <NotFound />,
+  component: RootComponent,
   shellComponent: RootDocument,
 })
+
+function RootComponent() {
+  const client = getConvexClient()
+  if (!client) {
+    return <Outlet />
+  }
+  return (
+    <ConvexProvider client={client}>
+      <Outlet />
+    </ConvexProvider>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

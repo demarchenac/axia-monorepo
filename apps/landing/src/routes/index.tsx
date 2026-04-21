@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { variantesPorFamilia, familiaLabels, type FamiliaSlug } from '~/themes/tokens'
+import { ClientOnly } from '~/components/ClientOnly'
+import { GalleryActions } from '~/components/GalleryActions'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -23,7 +25,13 @@ function Home() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs px-3 py-1.5 rounded-full bg-neutral-800 text-neutral-300 font-mono">12 variantes</span>
-            <span className="text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-300 font-mono border border-amber-500/30">v1.0</span>
+            <Link
+              to="/t/$slug"
+              params={{ slug: 'axia' }}
+              className="text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-300 font-mono border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+            >
+              Ver sitio actual →
+            </Link>
           </div>
         </div>
       </header>
@@ -54,30 +62,33 @@ function Home() {
                 <p className="text-neutral-400 text-lg leading-relaxed">{meta.tagline}</p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map((v) => {
+                {items.filter((v) => !v.video).map((v) => {
                   const href = `/${v.familia}/${v.paleta}`
                   return (
-                    <Link
+                    <div
                       key={href}
-                      to="/$familia/$paleta"
-                      params={{ familia: v.familia, paleta: v.paleta }}
-                      className="group relative block overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 hover:border-amber-500/50 transition-all"
+                      className="relative overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 hover:border-amber-500/50 transition-all"
                     >
-                      <div className="aspect-[16/10] overflow-hidden bg-neutral-800 relative">
-                        <iframe
-                          src={href}
-                          title={`${v.familia} ${v.paleta}`}
-                          loading="lazy"
-                          className="pointer-events-none border-0 absolute top-0 left-0"
-                          style={{
-                            width: '400%',
-                            height: '400%',
-                            transform: 'scale(0.25)',
-                            transformOrigin: 'top left',
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
+                      <Link
+                        to="/$familia/$paleta"
+                        params={{ familia: v.familia, paleta: v.paleta }}
+                        className="block"
+                      >
+                        <div className="aspect-[16/10] overflow-hidden bg-neutral-800 relative">
+                          <iframe
+                            src={href}
+                            title={`${v.familia} ${v.paleta}`}
+                            loading="lazy"
+                            className="pointer-events-none border-0 absolute top-0 left-0"
+                            style={{
+                              width: '400%',
+                              height: '400%',
+                              transform: 'scale(0.25)',
+                              transformOrigin: 'top left',
+                            }}
+                          />
+                        </div>
+                      </Link>
                       <div className="p-5 border-t border-neutral-800">
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <div className="flex items-center gap-2">
@@ -92,11 +103,18 @@ function Home() {
                           <span className="text-[10px] font-mono text-neutral-500 uppercase">{v.paleta}</span>
                         </div>
                         <div className="font-semibold mb-1">{v.label}</div>
-                        <p className="text-xs text-neutral-500 leading-relaxed line-clamp-2">
+                        <p className="text-xs text-neutral-500 leading-relaxed line-clamp-2 mb-4">
                           {v.descripcion}
                         </p>
+                        <ClientOnly>
+                          <GalleryActions
+                            familia={v.familia as FamiliaSlug}
+                            paleta={v.paleta}
+                            tokens={v.tokens as Record<string, string>}
+                          />
+                        </ClientOnly>
                       </div>
-                    </Link>
+                    </div>
                   )
                 })}
               </div>

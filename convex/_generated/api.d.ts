@@ -14,7 +14,13 @@ import type * as bot_queries from "../bot/queries.js";
 import type * as bot_tools from "../bot/tools.js";
 import type * as bot_twilio from "../bot/twilio.js";
 import type * as calendar_index from "../calendar/index.js";
+import type * as cleanup from "../cleanup.js";
+import type * as designTokens from "../designTokens.js";
+import type * as pages from "../pages.js";
+import type * as presets from "../presets.js";
 import type * as seed from "../seed.js";
+import type * as seedPresets from "../seedPresets.js";
+import type * as tenants from "../tenants.js";
 
 import type {
   ApiFromModules,
@@ -29,7 +35,13 @@ declare const fullApi: ApiFromModules<{
   "bot/tools": typeof bot_tools;
   "bot/twilio": typeof bot_twilio;
   "calendar/index": typeof calendar_index;
+  cleanup: typeof cleanup;
+  designTokens: typeof designTokens;
+  pages: typeof pages;
+  presets: typeof presets;
   seed: typeof seed;
+  seedPresets: typeof seedPresets;
+  tenants: typeof tenants;
 }>;
 
 /**
