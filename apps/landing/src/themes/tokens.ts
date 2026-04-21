@@ -1,4 +1,4 @@
-import type { ThemeTokens, FamiliaSlug, Variante } from '@talvu/ui/lib/theme-tokens'
+import type { ThemeTokens, FamiliaSlug, Variante } from '@talvu/blocks/lib/theme-tokens'
 export type { ThemeTokens, FamiliaSlug, Variante }
 
 import { eleganteVariantes } from './elegante'

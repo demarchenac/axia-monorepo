@@ -1,14 +1,14 @@
 import { createFileRoute, notFound, Link } from '@tanstack/react-router'
 import { findVariante, type FamiliaSlug } from '~/themes/tokens'
 import { DemoBadge } from '~/components/DemoBadge'
-import { TokenProvider } from '@talvu/ui/components/TokenProvider'
-import { SectionRenderer } from '@talvu/ui/components/SectionRenderer'
+import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
+import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
 import { ScrollIndicator } from '~/components/ScrollIndicator'
 import { buildCalidoSections } from '~/data/calido-sections'
 import { buildEleganteSections } from '~/data/elegante-sections'
 import { buildLujosoSections } from '~/data/lujoso-sections'
 import { buildClinicoSections } from '~/data/clinico-sections'
-import type { SectionDefinition } from '@talvu/ui/sections/types'
+import type { SectionDefinition } from '@talvu/blocks/sections/types'
 
 const builders: Record<FamiliaSlug, (video?: string) => SectionDefinition[]> = {
   'calido-y-amigable': buildCalidoSections,

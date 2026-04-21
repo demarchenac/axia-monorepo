@@ -2,8 +2,8 @@ import { clinica, whatsappLink } from './clinica'
 import { servicios } from './servicios'
 import { equipo } from './equipo'
 import { testimonios } from './testimonios'
-import { i18n } from '@talvu/ui/lib/content-helpers'
-import type { SectionDefinition } from '@talvu/ui/sections/types'
+import { i18n } from '@talvu/blocks/lib/content-helpers'
+import type { SectionDefinition } from '@talvu/blocks/sections/types'
 import type {
   HeaderContent,
   HeroContent,
@@ -12,7 +12,7 @@ import type {
   TestimonialsContent,
   CtaContent,
   FooterContent,
-} from '@talvu/ui/sections/types'
+} from '@talvu/blocks/sections/types'
 
 export function buildCalidoSections(video?: string): SectionDefinition[] {
   const header: HeaderContent = {

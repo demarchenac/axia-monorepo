@@ -8,7 +8,7 @@ import { buildEleganteSections } from '~/data/elegante-sections'
 import { buildLujosoSections } from '~/data/lujoso-sections'
 import { buildClinicoSections } from '~/data/clinico-sections'
 import type { FamiliaSlug } from '~/themes/tokens'
-import type { SectionDefinition } from '@talvu/ui/sections/types'
+import type { SectionDefinition } from '@talvu/blocks/sections/types'
 import { useState } from 'react'
 
 const builders: Record<FamiliaSlug, (video?: string) => SectionDefinition[]> = {

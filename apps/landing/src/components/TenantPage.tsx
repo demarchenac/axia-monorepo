@@ -2,10 +2,10 @@
 
 import { useQuery } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
-import { TokenProvider } from '@talvu/ui/components/TokenProvider'
-import { SectionRenderer } from '@talvu/ui/components/SectionRenderer'
+import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
+import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
 import { ScrollIndicator } from '~/components/ScrollIndicator'
-import type { ThemeTokens } from '@talvu/ui/lib/theme-tokens'
+import type { ThemeTokens } from '@talvu/blocks/lib/theme-tokens'
 
 export function TenantPage({ slug }: { slug: string }) {
   const tenant = useQuery(api.tenants.getBySlug, { slug })

@@ -2,8 +2,8 @@ import { clinica, whatsappLink } from './clinica'
 import { servicios } from './servicios'
 import { equipo } from './equipo'
 import { testimonios } from './testimonios'
-import { i18n } from '@talvu/ui/lib/content-helpers'
-import type { SectionDefinition } from '@talvu/ui/sections/types'
+import { i18n } from '@talvu/blocks/lib/content-helpers'
+import type { SectionDefinition } from '@talvu/blocks/sections/types'
 
 export function buildLujosoSections(video?: string): SectionDefinition[] {
   return [
