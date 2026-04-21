@@ -1,0 +1,4 @@
+@import 'tailwindcss' source('../');
+@source '../../../../packages/ui/src';
+@import '@talvu/ui/globals.css';
+@import '@fontsource-variable/roboto';

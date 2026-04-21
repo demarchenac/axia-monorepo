@@ -2,7 +2,36 @@
   "name": "@talvu/portal",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "echo 'Portal not yet implemented'"
-  }
+    "dev": "vite dev",
+    "build": "vite build && tsc --noEmit",
+    "preview": "vite preview",
+    "start": "node .output/server/index.mjs"
+  },
+  "dependencies": {
+    "@talvu/ui": "workspace:*",
+    "@workos/authkit-tanstack-react-start": "^0.6.0",
+    "@workos-inc/node": "^9.0.0",
+    "convex": "^1.35.1",
+    "@fontsource-variable/roboto": "^5.2.10",
+    "@tanstack/react-router": "^1.168.10",
+    "@tanstack/react-start": "^1.167.16",
+    "lucide-react": "^1.7.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^22.5.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "nitro": "^3.0.260311-beta",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.0"
+  },
+  "packageManager": "pnpm@10.28.0"
 }
