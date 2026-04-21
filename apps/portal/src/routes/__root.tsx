@@ -5,8 +5,6 @@ import {
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
-import { ConvexProvider } from 'convex/react'
-import { convexClient } from '~/lib/convex'
 import appCss from '~/styles/app.css?url'
 
 export const Route = createRootRoute({
@@ -33,9 +31,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="bg-background text-foreground antialiased">
-        <ConvexProvider client={convexClient}>
-          {children}
-        </ConvexProvider>
+        {children}
         <Scripts />
       </body>
     </html>

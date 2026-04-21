@@ -72,7 +72,7 @@ importers:
       '@talvu/blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
-      '@talvu/convex':
+      '@talvu/db':
         specifier: workspace:*
         version: link:../../packages/convex
       '@talvu/ui':
@@ -145,15 +145,21 @@ importers:
 
   apps/portal:
     dependencies:
+      '@convex-dev/react-query':
+        specifier: ^0.1.0
+        version: 0.1.0(@tanstack/react-query@5.99.2(react@19.2.5))(convex@1.35.1(react@19.2.5))
       '@fontsource-variable/roboto':
         specifier: ^5.2.10
         version: 5.2.10
-      '@talvu/convex':
+      '@talvu/db':
         specifier: workspace:*
         version: link:../../packages/convex
       '@talvu/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@tanstack/react-query':
+        specifier: ^5.99.2
+        version: 5.99.2(react@19.2.5)
       '@tanstack/react-router':
         specifier: ^1.168.10
         version: 1.168.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -587,6 +593,12 @@ packages:
         optional: true
       conventional-commits-parser:
         optional: true
+
+  '@convex-dev/react-query@0.1.0':
+    resolution: {integrity: sha512-ULmBZCtAQDUePdBhUv7hj1Yy4QiCelhi6uEIOtMpjW8db6W9CFKvQwLt9heLngccFyMFfAZdOfSrT+cP4AH0Jw==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.0.0
+      convex: ^1.29.3
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1794,6 +1806,14 @@ packages:
   '@tanstack/history@1.161.6':
     resolution: {integrity: sha512-NaOGLRrddszbQj9upGat6HG/4TKvXLvu+osAIgfxPYA+eIvYKv8GKDJOrY2D3/U9MRnKfMWD7bU4jeD4xmqyIg==}
     engines: {node: '>=20.19'}
+
+  '@tanstack/query-core@5.99.2':
+    resolution: {integrity: sha512-1HunU0bXVsR1ZJMZbcOPE6VtaBJxsW809RE9xPe4Gz7MlB0GWwQvuTPhMoEmQ/hIzFKJ/DWAuttIe7BOaWx0tA==}
+
+  '@tanstack/react-query@5.99.2':
+    resolution: {integrity: sha512-vM91UEe45QUS9ED6OklsVL15i8qKcRqNwpWzPTVWvRPRSEgDudDgHpvyTjcdlwHcrKNa80T+xXYcchT2noPnZA==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-router-devtools@1.166.13':
     resolution: {integrity: sha512-6yKRFFJrEEOiGp5RAAuGCYsl81M4XAhJmLcu9PKj+HZle4A3dsP60lwHoqQYWHMK9nKKFkdXR+D8qxzxqtQbEA==}
@@ -4483,6 +4503,11 @@ snapshots:
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.4.0
 
+  '@convex-dev/react-query@0.1.0(@tanstack/react-query@5.99.2(react@19.2.5))(convex@1.35.1(react@19.2.5))':
+    dependencies:
+      '@tanstack/react-query': 5.99.2(react@19.2.5)
+      convex: 1.35.1(react@19.2.5)
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -5335,6 +5360,13 @@ snapshots:
       vite: 8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)
 
   '@tanstack/history@1.161.6': {}
+
+  '@tanstack/query-core@5.99.2': {}
+
+  '@tanstack/react-query@5.99.2(react@19.2.5)':
+    dependencies:
+      '@tanstack/query-core': 5.99.2
+      react: 19.2.5
 
   '@tanstack/react-router-devtools@1.166.13(@tanstack/react-router@1.168.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@tanstack/router-core@1.168.14)(csstype@3.2.3)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
