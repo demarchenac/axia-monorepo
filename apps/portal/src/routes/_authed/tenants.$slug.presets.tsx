@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
 import { useState } from 'react'
+import { ArrowLeft, Check, ExternalLink, Eye, Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/_authed/tenants/$slug/presets')({
   component: PresetSelector,
@@ -48,7 +49,7 @@ function PresetSelector() {
     <div className="p-8">
       <div className="mb-6 flex items-center gap-3">
         <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-          &larr; Tenants
+          <ArrowLeft className="inline size-4" /> Tenants
         </Link>
         <span className="text-muted-foreground">/</span>
         <Link
@@ -63,15 +64,16 @@ function PresetSelector() {
       </div>
 
       {applied && (
-        <div className="mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Preset <strong>{applied}</strong> aplicado.{' '}
+        <div className="mb-6 flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          <Check className="size-4" />
+          Preset <strong>{applied}</strong> aplicado.
           <a
-            href={`http://localhost:3000/${slug}`}
+            href={`http://localhost:3000/t/${slug}`}
             target="_blank"
             rel="noopener"
-            className="font-medium underline"
+            className="ml-1 inline-flex items-center gap-1 font-medium underline"
           >
-            Ver landing &nearr;
+            Ver landing <ExternalLink className="size-3" />
           </a>
         </div>
       )}
@@ -117,21 +119,23 @@ function PresetSelector() {
                     <button
                       onClick={() => handleApply(preset.slug)}
                       disabled={applying !== null}
-                      className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                     >
-                      {applying === preset.slug
-                        ? 'Aplicando...'
-                        : applied === preset.slug
-                          ? 'Aplicado'
-                          : 'Aplicar'}
+                      {applying === preset.slug ? (
+                        <><Loader2 className="size-3 animate-spin" /> Aplicando...</>
+                      ) : applied === preset.slug ? (
+                        <><Check className="size-3" /> Aplicado</>
+                      ) : (
+                        'Aplicar'
+                      )}
                     </button>
                     <a
                       href={`http://localhost:3000/${familia}/${preset.slug.split('-').slice(1).join('-')}`}
                       target="_blank"
                       rel="noopener"
-                      className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
                     >
-                      Preview
+                      <Eye className="size-3" /> Preview
                     </a>
                   </div>
                 </div>

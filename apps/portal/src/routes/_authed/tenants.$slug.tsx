@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
 import { useState } from 'react'
+import { ArrowLeft, Palette, ExternalLink, LinkIcon, Copy, Check, RotateCcw, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/_authed/tenants/$slug')({
   component: TenantDetail,
@@ -51,7 +52,7 @@ function TenantDetail() {
     <div className="mx-auto max-w-2xl p-8">
       <div className="mb-6 flex items-center gap-3">
         <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-          &larr; Tenants
+          <ArrowLeft className="inline size-4" /> Tenants
         </Link>
         <span className="text-muted-foreground">/</span>
         <h1 className="text-2xl font-semibold tracking-tight">{tenant.name}</h1>
@@ -61,19 +62,23 @@ function TenantDetail() {
         <Link
           to="/tenants/$slug/presets"
           params={{ slug }}
-          className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-muted"
+          className="inline-flex h-9 items-center gap-2 rounded-md border px-4 text-sm font-medium transition-colors hover:bg-muted"
         >
+          <Palette className="size-4" />
           Presets
         </Link>
         <a
-          href={`http://localhost:3000/${slug}`}
+          href={`http://localhost:3000/t/${slug}`}
           target="_blank"
           rel="noopener"
-          className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-muted"
+          className="inline-flex h-9 items-center gap-2 rounded-md border px-4 text-sm font-medium transition-colors hover:bg-muted"
         >
-          Ver landing &nearr;
+          <ExternalLink className="size-4" />
+          Ver landing
         </a>
       </div>
+
+      <PreviewTokenSection slug={slug} tenant={tenant} />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Nombre" name="name" defaultValue={tenant.name} required />
@@ -112,6 +117,88 @@ function TenantDetail() {
           {saved && <span className="text-sm text-emerald-600">Guardado</span>}
         </div>
       </form>
+    </div>
+  )
+}
+
+function PreviewTokenSection({ slug, tenant }: { slug: string; tenant: { _id: any; previewToken?: string } }) {
+  const generateToken = useMutation(api.tenants.generatePreviewToken)
+  const revokeToken = useMutation(api.tenants.revokePreviewToken)
+  const [generating, setGenerating] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const previewUrl = tenant.previewToken
+    ? `http://localhost:3000/t/${slug}/presets?token=${tenant.previewToken}`
+    : null
+
+  async function handleGenerate() {
+    setGenerating(true)
+    try {
+      await generateToken({ id: tenant._id })
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  async function handleCopy() {
+    if (!previewUrl) return
+    await navigator.clipboard.writeText(previewUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="mb-6 rounded-lg border p-4">
+      <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+        <LinkIcon className="size-4" />
+        Link de preview para el cliente
+      </div>
+      {previewUrl ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <input
+              readOnly
+              value={previewUrl}
+              className="h-9 flex-1 rounded-md border bg-muted px-3 font-mono text-xs outline-none"
+            />
+            <button
+              onClick={handleCopy}
+              className="inline-flex h-9 items-center gap-1.5 rounded-md border px-3 text-sm font-medium transition-colors hover:bg-muted"
+            >
+              {copied ? <><Check className="size-4 text-emerald-600" /> Copiado</> : <><Copy className="size-4" /> Copiar</>}
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted disabled:opacity-50"
+            >
+              <RotateCcw className="size-3" /> Regenerar
+            </button>
+            <button
+              onClick={() => revokeToken({ id: tenant._id })}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50"
+            >
+              <Trash2 className="size-3" /> Revocar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Genera un link para que el cliente vea y elija sus presets de diseño sin iniciar sesión.
+          </p>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            <LinkIcon className="size-4" />
+            {generating ? 'Generando...' : 'Generar link de preview'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

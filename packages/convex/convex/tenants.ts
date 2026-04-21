@@ -58,6 +58,47 @@ export const create = mutation({
   },
 });
 
+export const generatePreviewToken = mutation({
+  args: { id: v.id("tenants") },
+  handler: async (ctx, { id }) => {
+    const token = Array.from(crypto.getRandomValues(new Uint8Array(24)))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    await ctx.db.patch(id, {
+      previewToken: token,
+      previewRevokedAt: undefined,
+      previewRevokedReason: undefined,
+      updatedAt: Date.now(),
+    });
+    return token;
+  },
+});
+
+export const revokePreviewToken = mutation({
+  args: { id: v.id("tenants") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.patch(id, {
+      previewToken: undefined,
+      previewRevokedAt: Date.now(),
+      previewRevokedReason: "manual",
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+export const validatePreviewToken = query({
+  args: { slug: v.string(), token: v.string() },
+  handler: async (ctx, { slug, token }) => {
+    const tenant = await ctx.db
+      .query("tenants")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .first();
+    if (!tenant) return null;
+    if (tenant.previewToken !== token) return null;
+    return tenant;
+  },
+});
+
 export const update = mutation({
   args: {
     id: v.id("tenants"),
