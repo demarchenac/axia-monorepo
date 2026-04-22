@@ -1,17 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientOnly } from '~/components/ClientOnly'
-import { PresetPicker } from '~/components/PresetPicker'
+import { DemoGallery } from '~/components/DemoGallery'
 
-type PresetSearch = { token?: string }
+type DemoSearch = { token?: string }
 
-export const Route = createFileRoute('/t/$slug/presets')({
-  validateSearch: (search: Record<string, unknown>): PresetSearch => ({
+export const Route = createFileRoute('/t/$slug/demo')({
+  validateSearch: (search: Record<string, unknown>): DemoSearch => ({
     token: typeof search.token === 'string' ? search.token : undefined,
   }),
-  component: PresetPickerRoute,
+  component: DemoRoute,
 })
 
-function PresetPickerRoute() {
+function DemoRoute() {
   const { slug } = Route.useParams()
   const { token } = Route.useSearch()
 
@@ -21,7 +21,7 @@ function PresetPickerRoute() {
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-neutral-900">Acceso no autorizado</h1>
           <p className="mt-2 text-sm text-neutral-500">
-            Necesitas un link válido para acceder a esta página.
+            Necesitas un link válido para acceder a esta galería.
           </p>
         </div>
       </div>
@@ -32,11 +32,11 @@ function PresetPickerRoute() {
     <ClientOnly
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-neutral-50">
-          <div className="animate-pulse text-neutral-400">Cargando...</div>
+          <div className="animate-pulse text-neutral-400">Cargando galería...</div>
         </div>
       }
     >
-      <PresetPicker slug={slug} token={token} />
+      <DemoGallery slug={slug} token={token} />
     </ClientOnly>
   )
 }

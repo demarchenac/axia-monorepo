@@ -24,6 +24,43 @@ export const getBySlug = query({
   },
 });
 
+export const resolvePreview = query({
+  args: { presetSlug: v.string() },
+  handler: async (ctx, { presetSlug }) => {
+    const preset = await ctx.db
+      .query("previewPresets")
+      .withIndex("by_slug", (q) => q.eq("slug", presetSlug))
+      .first();
+    if (!preset) return null;
+
+    const sections = [];
+    for (const comp of preset.sectionComposition) {
+      let content = {};
+      if (comp.contentKey) {
+        const seed = await ctx.db
+          .query("seedContent")
+          .withIndex("by_industry_section_key", (q) =>
+            q
+              .eq("industry", preset.industry)
+              .eq("sectionType", comp.type)
+              .eq("contentKey", comp.contentKey!),
+          )
+          .first();
+        if (seed) content = seed.content;
+      }
+      sections.push({
+        type: comp.type,
+        variant: comp.variant,
+        order: comp.order,
+        content,
+        visible: true,
+      });
+    }
+
+    return { preset, sections };
+  },
+});
+
 export const applyToTenant = mutation({
   args: {
     tenantId: v.id("tenants"),

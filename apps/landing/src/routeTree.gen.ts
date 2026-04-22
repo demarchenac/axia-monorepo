@@ -12,7 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TSlugRouteImport } from './routes/t/$slug'
 import { Route as FamiliaPaletaRouteImport } from './routes/$familia.$paleta'
-import { Route as TSlugPresetsRouteImport } from './routes/t/$slug.presets'
+import { Route as TSlugDemoRouteImport } from './routes/t/$slug.demo'
+import { Route as TSlugPreviewPresetSlugRouteImport } from './routes/t/$slug.preview.$presetSlug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +30,14 @@ const FamiliaPaletaRoute = FamiliaPaletaRouteImport.update({
   path: '/$familia/$paleta',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TSlugPresetsRoute = TSlugPresetsRouteImport.update({
-  id: '/presets',
-  path: '/presets',
+const TSlugDemoRoute = TSlugDemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => TSlugRoute,
+} as any)
+const TSlugPreviewPresetSlugRoute = TSlugPreviewPresetSlugRouteImport.update({
+  id: '/preview/$presetSlug',
+  path: '/preview/$presetSlug',
   getParentRoute: () => TSlugRoute,
 } as any)
 
@@ -39,27 +45,46 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
   '/t/$slug': typeof TSlugRouteWithChildren
-  '/t/$slug/presets': typeof TSlugPresetsRoute
+  '/t/$slug/demo': typeof TSlugDemoRoute
+  '/t/$slug/preview/$presetSlug': typeof TSlugPreviewPresetSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
   '/t/$slug': typeof TSlugRouteWithChildren
-  '/t/$slug/presets': typeof TSlugPresetsRoute
+  '/t/$slug/demo': typeof TSlugDemoRoute
+  '/t/$slug/preview/$presetSlug': typeof TSlugPreviewPresetSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$familia/$paleta': typeof FamiliaPaletaRoute
   '/t/$slug': typeof TSlugRouteWithChildren
-  '/t/$slug/presets': typeof TSlugPresetsRoute
+  '/t/$slug/demo': typeof TSlugDemoRoute
+  '/t/$slug/preview/$presetSlug': typeof TSlugPreviewPresetSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
+  fullPaths:
+    | '/'
+    | '/$familia/$paleta'
+    | '/t/$slug'
+    | '/t/$slug/demo'
+    | '/t/$slug/preview/$presetSlug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
-  id: '__root__' | '/' | '/$familia/$paleta' | '/t/$slug' | '/t/$slug/presets'
+  to:
+    | '/'
+    | '/$familia/$paleta'
+    | '/t/$slug'
+    | '/t/$slug/demo'
+    | '/t/$slug/preview/$presetSlug'
+  id:
+    | '__root__'
+    | '/'
+    | '/$familia/$paleta'
+    | '/t/$slug'
+    | '/t/$slug/demo'
+    | '/t/$slug/preview/$presetSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,22 +116,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamiliaPaletaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/t/$slug/presets': {
-      id: '/t/$slug/presets'
-      path: '/presets'
-      fullPath: '/t/$slug/presets'
-      preLoaderRoute: typeof TSlugPresetsRouteImport
+    '/t/$slug/demo': {
+      id: '/t/$slug/demo'
+      path: '/demo'
+      fullPath: '/t/$slug/demo'
+      preLoaderRoute: typeof TSlugDemoRouteImport
+      parentRoute: typeof TSlugRoute
+    }
+    '/t/$slug/preview/$presetSlug': {
+      id: '/t/$slug/preview/$presetSlug'
+      path: '/preview/$presetSlug'
+      fullPath: '/t/$slug/preview/$presetSlug'
+      preLoaderRoute: typeof TSlugPreviewPresetSlugRouteImport
       parentRoute: typeof TSlugRoute
     }
   }
 }
 
 interface TSlugRouteChildren {
-  TSlugPresetsRoute: typeof TSlugPresetsRoute
+  TSlugDemoRoute: typeof TSlugDemoRoute
+  TSlugPreviewPresetSlugRoute: typeof TSlugPreviewPresetSlugRoute
 }
 
 const TSlugRouteChildren: TSlugRouteChildren = {
-  TSlugPresetsRoute: TSlugPresetsRoute,
+  TSlugDemoRoute: TSlugDemoRoute,
+  TSlugPreviewPresetSlugRoute: TSlugPreviewPresetSlugRoute,
 }
 
 const TSlugRouteWithChildren = TSlugRoute._addFileChildren(TSlugRouteChildren)

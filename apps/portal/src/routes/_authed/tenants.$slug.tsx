@@ -307,7 +307,7 @@ function PreviewTokenSection({ slug, tenant }: { slug: string; tenant: { _id: an
   const [copied, setCopied] = useState(false)
 
   const previewUrl = tenant.previewToken
-    ? `http://localhost:3000/t/${slug}/presets?token=${tenant.previewToken}`
+    ? `http://localhost:3000/t/${slug}/demo?token=${tenant.previewToken}`
     : null
 
   async function handleGenerate() {
