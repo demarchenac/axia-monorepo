@@ -4,7 +4,7 @@ import { api } from '@talvu/db'
 import { useState } from 'react'
 import { ArrowLeft, Check, ExternalLink, Eye, Loader2 } from 'lucide-react'
 
-export const Route = createFileRoute('/_authed/tenants/$slug/presets')({
+export const Route = createFileRoute('/_authed/tenants_/$slug_/presets')({
   component: PresetSelector,
 })
 

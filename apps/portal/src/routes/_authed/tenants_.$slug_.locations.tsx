@@ -13,7 +13,7 @@ import {
   ArrowLeft, MapPin, Plus, Star, Phone, Clock, Pencil, Trash2, X,
 } from 'lucide-react'
 
-export const Route = createFileRoute('/_authed/tenants/$slug/locations')({
+export const Route = createFileRoute('/_authed/tenants_/$slug_/locations')({
   component: LocationsPage,
 })
 

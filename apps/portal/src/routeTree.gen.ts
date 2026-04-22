@@ -16,8 +16,8 @@ import { Route as ApiAuthSignoutRouteImport } from './routes/api/auth/signout'
 import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
 import { Route as AuthedTenantsNewRouteImport } from './routes/_authed/tenants.new'
 import { Route as AuthedTenantsSlugRouteImport } from './routes/_authed/tenants.$slug'
-import { Route as AuthedTenantsSlugPresetsRouteImport } from './routes/_authed/tenants.$slug.presets'
-import { Route as AuthedTenantsSlugLocationsRouteImport } from './routes/_authed/tenants.$slug.locations'
+import { Route as AuthedTenantsSlugPresetsRouteImport } from './routes/_authed/tenants_.$slug_.presets'
+import { Route as AuthedTenantsSlugLocationsRouteImport } from './routes/_authed/tenants_.$slug_.locations'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -55,21 +55,21 @@ const AuthedTenantsSlugRoute = AuthedTenantsSlugRouteImport.update({
 } as any)
 const AuthedTenantsSlugPresetsRoute =
   AuthedTenantsSlugPresetsRouteImport.update({
-    id: '/presets',
-    path: '/presets',
-    getParentRoute: () => AuthedTenantsSlugRoute,
+    id: '/tenants_/$slug_/presets',
+    path: '/tenants/$slug/presets',
+    getParentRoute: () => AuthedRoute,
   } as any)
 const AuthedTenantsSlugLocationsRoute =
   AuthedTenantsSlugLocationsRouteImport.update({
-    id: '/locations',
-    path: '/locations',
-    getParentRoute: () => AuthedTenantsSlugRoute,
+    id: '/tenants_/$slug_/locations',
+    path: '/tenants/$slug/locations',
+    getParentRoute: () => AuthedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
   '/sign-in': typeof SignInRoute
-  '/tenants/$slug': typeof AuthedTenantsSlugRouteWithChildren
+  '/tenants/$slug': typeof AuthedTenantsSlugRoute
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
@@ -79,7 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/': typeof AuthedIndexRoute
-  '/tenants/$slug': typeof AuthedTenantsSlugRouteWithChildren
+  '/tenants/$slug': typeof AuthedTenantsSlugRoute
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
@@ -91,12 +91,12 @@ export interface FileRoutesById {
   '/_authed': typeof AuthedRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/_authed/': typeof AuthedIndexRoute
-  '/_authed/tenants/$slug': typeof AuthedTenantsSlugRouteWithChildren
+  '/_authed/tenants/$slug': typeof AuthedTenantsSlugRoute
   '/_authed/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
-  '/_authed/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
-  '/_authed/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
+  '/_authed/tenants_/$slug_/locations': typeof AuthedTenantsSlugLocationsRoute
+  '/_authed/tenants_/$slug_/presets': typeof AuthedTenantsSlugPresetsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,8 +128,8 @@ export interface FileRouteTypes {
     | '/_authed/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
-    | '/_authed/tenants/$slug/locations'
-    | '/_authed/tenants/$slug/presets'
+    | '/_authed/tenants_/$slug_/locations'
+    | '/_authed/tenants_/$slug_/presets'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -190,46 +190,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedTenantsSlugRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/_authed/tenants/$slug/presets': {
-      id: '/_authed/tenants/$slug/presets'
-      path: '/presets'
+    '/_authed/tenants_/$slug_/presets': {
+      id: '/_authed/tenants_/$slug_/presets'
+      path: '/tenants/$slug/presets'
       fullPath: '/tenants/$slug/presets'
       preLoaderRoute: typeof AuthedTenantsSlugPresetsRouteImport
-      parentRoute: typeof AuthedTenantsSlugRoute
+      parentRoute: typeof AuthedRoute
     }
-    '/_authed/tenants/$slug/locations': {
-      id: '/_authed/tenants/$slug/locations'
-      path: '/locations'
+    '/_authed/tenants_/$slug_/locations': {
+      id: '/_authed/tenants_/$slug_/locations'
+      path: '/tenants/$slug/locations'
       fullPath: '/tenants/$slug/locations'
       preLoaderRoute: typeof AuthedTenantsSlugLocationsRouteImport
-      parentRoute: typeof AuthedTenantsSlugRoute
+      parentRoute: typeof AuthedRoute
     }
   }
 }
 
-interface AuthedTenantsSlugRouteChildren {
+interface AuthedRouteChildren {
+  AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedTenantsSlugRoute: typeof AuthedTenantsSlugRoute
+  AuthedTenantsNewRoute: typeof AuthedTenantsNewRoute
   AuthedTenantsSlugLocationsRoute: typeof AuthedTenantsSlugLocationsRoute
   AuthedTenantsSlugPresetsRoute: typeof AuthedTenantsSlugPresetsRoute
 }
 
-const AuthedTenantsSlugRouteChildren: AuthedTenantsSlugRouteChildren = {
-  AuthedTenantsSlugLocationsRoute: AuthedTenantsSlugLocationsRoute,
-  AuthedTenantsSlugPresetsRoute: AuthedTenantsSlugPresetsRoute,
-}
-
-const AuthedTenantsSlugRouteWithChildren =
-  AuthedTenantsSlugRoute._addFileChildren(AuthedTenantsSlugRouteChildren)
-
-interface AuthedRouteChildren {
-  AuthedIndexRoute: typeof AuthedIndexRoute
-  AuthedTenantsSlugRoute: typeof AuthedTenantsSlugRouteWithChildren
-  AuthedTenantsNewRoute: typeof AuthedTenantsNewRoute
-}
-
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedIndexRoute: AuthedIndexRoute,
-  AuthedTenantsSlugRoute: AuthedTenantsSlugRouteWithChildren,
+  AuthedTenantsSlugRoute: AuthedTenantsSlugRoute,
   AuthedTenantsNewRoute: AuthedTenantsNewRoute,
+  AuthedTenantsSlugLocationsRoute: AuthedTenantsSlugLocationsRoute,
+  AuthedTenantsSlugPresetsRoute: AuthedTenantsSlugPresetsRoute,
 }
 
 const AuthedRouteWithChildren =
