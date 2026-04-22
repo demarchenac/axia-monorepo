@@ -4,7 +4,7 @@ import { PresetPreview } from '~/components/PresetPreview'
 
 type PreviewSearch = { token?: string }
 
-export const Route = createFileRoute('/t/$slug/preview/$presetSlug')({
+export const Route = createFileRoute('/t/$slug_/preview/$presetSlug')({
   validateSearch: (search: Record<string, unknown>): PreviewSearch => ({
     token: typeof search.token === 'string' ? search.token : undefined,
   }),

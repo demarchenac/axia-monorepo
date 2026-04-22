@@ -4,7 +4,7 @@ import { DemoGallery } from '~/components/DemoGallery'
 
 type DemoSearch = { token?: string }
 
-export const Route = createFileRoute('/t/$slug/demo')({
+export const Route = createFileRoute('/t/$slug_/demo')({
   validateSearch: (search: Record<string, unknown>): DemoSearch => ({
     token: typeof search.token === 'string' ? search.token : undefined,
   }),
