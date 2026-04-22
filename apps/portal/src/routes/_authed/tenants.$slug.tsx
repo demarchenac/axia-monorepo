@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@talvu/ui/components/tabs'
 import { Input } from '@talvu/ui/components/input'
 import { Label } from '@talvu/ui/components/label'
-import { ArrowLeft, Palette, ExternalLink, LinkIcon, Copy, Check, RotateCcw, Trash2 } from 'lucide-react'
+import { ArrowLeft, Palette, ExternalLink, LinkIcon, Copy, Check, RotateCcw, Trash2, MapPin } from 'lucide-react'
 
 export const Route = createFileRoute('/_authed/tenants/$slug')({
   component: TenantDetail,
@@ -42,6 +42,13 @@ function TenantDetail() {
           className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
         >
           <Palette className="size-3.5" /> Presets
+        </Link>
+        <Link
+          to="/tenants/$slug/locations"
+          params={{ slug }}
+          className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
+        >
+          <MapPin className="size-3.5" /> Ubicaciones
         </Link>
         <a
           href={`http://localhost:3000/t/${slug}`}

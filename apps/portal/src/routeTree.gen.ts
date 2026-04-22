@@ -17,6 +17,7 @@ import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
 import { Route as AuthedTenantsNewRouteImport } from './routes/_authed/tenants.new'
 import { Route as AuthedTenantsSlugRouteImport } from './routes/_authed/tenants.$slug'
 import { Route as AuthedTenantsSlugPresetsRouteImport } from './routes/_authed/tenants.$slug.presets'
+import { Route as AuthedTenantsSlugLocationsRouteImport } from './routes/_authed/tenants.$slug.locations'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -58,6 +59,12 @@ const AuthedTenantsSlugPresetsRoute =
     path: '/presets',
     getParentRoute: () => AuthedTenantsSlugRoute,
   } as any)
+const AuthedTenantsSlugLocationsRoute =
+  AuthedTenantsSlugLocationsRouteImport.update({
+    id: '/locations',
+    path: '/locations',
+    getParentRoute: () => AuthedTenantsSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
   '/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +83,7 @@ export interface FileRoutesByTo {
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
   '/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
 }
 export interface FileRoutesById {
@@ -86,6 +95,7 @@ export interface FileRoutesById {
   '/_authed/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/_authed/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
   '/_authed/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/tenants/$slug/locations'
     | '/tenants/$slug/presets'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/tenants/$slug/locations'
     | '/tenants/$slug/presets'
   id:
     | '__root__'
@@ -116,6 +128,7 @@ export interface FileRouteTypes {
     | '/_authed/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/_authed/tenants/$slug/locations'
     | '/_authed/tenants/$slug/presets'
   fileRoutesById: FileRoutesById
 }
@@ -184,14 +197,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedTenantsSlugPresetsRouteImport
       parentRoute: typeof AuthedTenantsSlugRoute
     }
+    '/_authed/tenants/$slug/locations': {
+      id: '/_authed/tenants/$slug/locations'
+      path: '/locations'
+      fullPath: '/tenants/$slug/locations'
+      preLoaderRoute: typeof AuthedTenantsSlugLocationsRouteImport
+      parentRoute: typeof AuthedTenantsSlugRoute
+    }
   }
 }
 
 interface AuthedTenantsSlugRouteChildren {
+  AuthedTenantsSlugLocationsRoute: typeof AuthedTenantsSlugLocationsRoute
   AuthedTenantsSlugPresetsRoute: typeof AuthedTenantsSlugPresetsRoute
 }
 
 const AuthedTenantsSlugRouteChildren: AuthedTenantsSlugRouteChildren = {
+  AuthedTenantsSlugLocationsRoute: AuthedTenantsSlugLocationsRoute,
   AuthedTenantsSlugPresetsRoute: AuthedTenantsSlugPresetsRoute,
 }
 
