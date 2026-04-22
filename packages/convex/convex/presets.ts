@@ -24,6 +24,77 @@ export const getBySlug = query({
   },
 });
 
+const defaultContent: Record<string, Record<string, unknown>> = {
+  header: {
+    clinicName: "Clínica Demo",
+    navItems: [
+      { label: { es: "Inicio" }, href: "#" },
+      { label: { es: "Servicios" }, href: "#servicios" },
+      { label: { es: "Equipo" }, href: "#equipo" },
+      { label: { es: "Contacto" }, href: "#contacto" },
+    ],
+    ctaLabel: { es: "Agendar cita" },
+    ctaHref: "#contacto",
+    overlay: false,
+  },
+  hero: {
+    heading: { es: "Tu sonrisa merece lo mejor" },
+    headingAccent: { es: "lo mejor" },
+    subheading: { es: "Odontología de alta calidad con tecnología de vanguardia y un equipo humano comprometido con tu bienestar." },
+    ctas: [
+      { label: { es: "Agendar cita" }, href: "#contacto", variant: "primary" },
+      { label: { es: "Conocer servicios" }, href: "#servicios", variant: "secondary" },
+    ],
+    imageUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900&q=85",
+  },
+  services: {
+    eyebrow: { es: "Nuestros servicios" },
+    heading: { es: "Cuidado dental integral" },
+    subheading: { es: "Ofrecemos una amplia gama de tratamientos para toda la familia." },
+    items: [
+      { name: { es: "Limpieza dental" }, description: { es: "Limpieza profesional para mantener tu sonrisa saludable." } },
+      { name: { es: "Blanqueamiento" }, description: { es: "Recupera el blanco natural de tus dientes." } },
+      { name: { es: "Ortodoncia" }, description: { es: "Alinea tu sonrisa con las últimas técnicas." } },
+    ],
+  },
+  team: {
+    eyebrow: { es: "Nuestro equipo" },
+    heading: { es: "Profesionales comprometidos" },
+    subheading: { es: "Un equipo multidisciplinario dedicado a tu salud dental." },
+    members: [
+      { name: "Dr. Ejemplo", role: { es: "Odontólogo General" }, bio: { es: "10 años de experiencia." }, photoUrl: "" },
+    ],
+  },
+  testimonials: {
+    eyebrow: { es: "Testimonios" },
+    heading: { es: "Lo que dicen nuestros pacientes" },
+    items: [
+      { name: "María G.", location: "Barranquilla", service: "Blanqueamiento", text: { es: "Excelente servicio, muy profesionales." }, rating: 5 },
+      { name: "Carlos R.", location: "Barranquilla", service: "Limpieza", text: { es: "Me sentí muy cómodo durante todo el proceso." }, rating: 5 },
+    ],
+  },
+  stats: {
+    items: [
+      { value: "10+", label: { es: "Años de experiencia" } },
+      { value: "5000+", label: { es: "Pacientes felices" } },
+      { value: "15+", label: { es: "Especialistas" } },
+    ],
+  },
+  "cta-contact": {
+    heading: { es: "¿Listo para tu nueva sonrisa?" },
+    subheading: { es: "Agenda tu cita hoy y da el primer paso." },
+    cta: { label: { es: "Agendar cita" }, href: "#", variant: "primary" },
+    details: [
+      { icon: "phone", text: { es: "+57 300 123 4567" } },
+      { icon: "clock", text: { es: "Lun - Sáb: 8:00 - 18:00" } },
+      { icon: "map", text: { es: "Calle 84 #53-100, Barranquilla" } },
+    ],
+  },
+  footer: {
+    clinicName: "Clínica Demo",
+  },
+};
+
 export const resolvePreview = query({
   args: { presetSlug: v.string() },
   handler: async (ctx, { presetSlug }) => {
@@ -35,7 +106,7 @@ export const resolvePreview = query({
 
     const sections = [];
     for (const comp of preset.sectionComposition) {
-      let content = {};
+      let content: Record<string, unknown> = {};
       if (comp.contentKey) {
         const seed = await ctx.db
           .query("seedContent")
@@ -46,7 +117,10 @@ export const resolvePreview = query({
               .eq("contentKey", comp.contentKey!),
           )
           .first();
-        if (seed) content = seed.content;
+        if (seed) content = seed.content as Record<string, unknown>;
+      }
+      if (Object.keys(content).length === 0) {
+        content = defaultContent[comp.type] ?? {};
       }
       sections.push({
         type: comp.type,
