@@ -62,7 +62,7 @@ const defaultContent: Record<string, Record<string, unknown>> = {
     heading: { es: "Profesionales comprometidos" },
     subheading: { es: "Un equipo multidisciplinario dedicado a tu salud dental." },
     members: [
-      { name: "Dr. Ejemplo", role: { es: "Odontólogo General" }, bio: { es: "10 años de experiencia." }, photoUrl: "" },
+      { name: "Dr. Ejemplo", role: { es: "Odontólogo General" }, bio: { es: "10 años de experiencia." }, photoUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&q=80" },
     ],
   },
   testimonials: {
