@@ -14,6 +14,24 @@ export const heroEleganteVideoMeta = {
   recommendedFamilies: ['elegante-y-sofisticado'],
 }
 
+function HeadingWithAccent({ heading, accent }: { heading: string; accent?: string }) {
+  if (!accent) return <>{heading}</>
+  const idx = heading.toLowerCase().indexOf(accent.toLowerCase())
+  if (idx === -1) {
+    return <>{heading} <em className="text-[var(--accent)]">{accent}</em></>
+  }
+  const before = heading.slice(0, idx)
+  const match = heading.slice(idx, idx + accent.length)
+  const after = heading.slice(idx + accent.length)
+  return (
+    <>
+      {before}
+      <em className="text-[var(--accent)]">{match}</em>
+      {after}
+    </>
+  )
+}
+
 function HeroInner({ content, locale, isVideo }: SectionProps<HeroContent> & { isVideo: boolean }) {
   return (
     <div className={`max-w-4xl mx-auto px-8 py-32 text-center ${isVideo ? 'text-white' : ''}`}>
@@ -23,10 +41,10 @@ function HeroInner({ content, locale, isVideo }: SectionProps<HeroContent> & { i
         </p>
       )}
       <h1 className="display text-6xl md:text-8xl font-normal leading-[1.05] mb-10">
-        {resolve(content.heading, locale)}{' '}
-        {content.headingAccent && (
-          <em className="text-[var(--accent)]">{resolve(content.headingAccent, locale)}</em>
-        )}
+        <HeadingWithAccent
+          heading={resolve(content.heading, locale)}
+          accent={content.headingAccent ? resolve(content.headingAccent, locale) : undefined}
+        />
       </h1>
       <p className={`text-lg md:text-xl ${isVideo ? 'opacity-80' : 'text-[var(--fg-muted)]'} max-w-2xl mx-auto leading-relaxed text-justify mb-12`}>
         {resolve(content.subheading, locale)}
