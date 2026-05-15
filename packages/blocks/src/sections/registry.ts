@@ -6,7 +6,7 @@ import { TeamCalido, TeamElegante, TeamLujoso, TeamClinico } from './team'
 import { TestimonialsCalido, TestimonialsElegante, TestimonialsLujoso, TestimonialsClinico } from './testimonials'
 import { CtaCalido, CtaElegante, CtaLujoso, CtaClinico } from './cta-contact'
 import { FooterCalido, FooterElegante, FooterLujoso, FooterClinico } from './footer'
-import { StatsClinico } from './stats'
+import { StatsCalido, StatsElegante, StatsLujoso, StatsClinico } from './stats'
 
 export const sectionRegistry: Record<string, SectionComponent> = {
   // Calido
@@ -17,6 +17,7 @@ export const sectionRegistry: Record<string, SectionComponent> = {
   'team::calido': TeamCalido,
   'testimonials::calido': TestimonialsCalido,
   'cta-contact::calido': CtaCalido,
+  'stats::calido': StatsCalido,
   'footer::calido': FooterCalido,
   // Elegante
   'header::elegante': HeaderElegante,
@@ -26,6 +27,7 @@ export const sectionRegistry: Record<string, SectionComponent> = {
   'team::elegante': TeamElegante,
   'testimonials::elegante': TestimonialsElegante,
   'cta-contact::elegante': CtaElegante,
+  'stats::elegante': StatsElegante,
   'footer::elegante': FooterElegante,
   // Lujoso
   'header::lujoso': HeaderLujoso,
@@ -35,6 +37,7 @@ export const sectionRegistry: Record<string, SectionComponent> = {
   'team::lujoso': TeamLujoso,
   'testimonials::lujoso': TestimonialsLujoso,
   'cta-contact::lujoso': CtaLujoso,
+  'stats::lujoso': StatsLujoso,
   'footer::lujoso': FooterLujoso,
   // Clinico
   'header::clinico': HeaderClinico,

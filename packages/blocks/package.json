@@ -20,6 +20,8 @@
     "./components/*": "./src/components/*.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./sections/types": "./src/sections/types.ts",
+    "./sections/catalog": "./src/sections/catalog.ts",
+    "./sections/registry": "./src/sections/registry.ts",
     "./sections/*": "./src/sections/*/index.ts"
   }
 }
