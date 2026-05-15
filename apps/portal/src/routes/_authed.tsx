@@ -118,8 +118,8 @@ function AuthedLayout() {
         <SidebarRail />
       </Sidebar>
 
-      <SidebarInset>
-        <header className="flex h-10 items-center border-b px-4">
+      <SidebarInset className="flex flex-col h-svh overflow-hidden">
+        <header className="flex h-10 shrink-0 items-center border-b px-4">
           <SidebarTrigger className="-ml-1" />
         </header>
         <div className="flex-1 overflow-y-auto">
