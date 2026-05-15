@@ -2,6 +2,13 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 
+const FAMILIA_VIDEOS: Record<string, string> = {
+  calido: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5Doazq8PBXcXNn8FCzQM9bTy4BedivlkpsRUwm",
+  elegante: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DKQQEqDMNY9kd8fWFj7AX0DnR3VMweUBT4gHE",
+  lujoso: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5D9EyxTm2UKMLxod1C4WjAcsqSlpFmbOgtziGT",
+  clinico: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DVaY0YarmN21v3p5XSbUlezhQ7L4kwFPGZCnE",
+};
+
 export const getByIndustry = query({
   args: { industry: v.string() },
   handler: async (ctx, { industry }) => {
@@ -531,15 +538,9 @@ export const resolvePreview = query({
     for (const comp of preset.sectionComposition) {
       let content = contentMap[comp.type] ?? defaultContent[comp.type] ?? {};
       if (comp.type === "hero" && comp.variant.endsWith("-video")) {
-        const familiaVideos: Record<string, string> = {
-          calido: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5Doazq8PBXcXNn8FCzQM9bTy4BedivlkpsRUwm",
-          elegante: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DKQQEqDMNY9kd8fWFj7AX0DnR3VMweUBT4gHE",
-          lujoso: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5D9EyxTm2UKMLxod1C4WjAcsqSlpFmbOgtziGT",
-          clinico: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DVaY0YarmN21v3p5XSbUlezhQ7L4kwFPGZCnE",
-        };
         content = {
           ...content,
-          videoUrl: familiaVideos[preset.familia] ?? familiaVideos.calido,
+          videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido,
         };
       }
       sections.push({
@@ -875,6 +876,16 @@ export const applyToTenant = mutation({
 
       if (Object.keys(content).length === 0) {
         content = tenantContent[comp.type] ?? defaultContent[comp.type] ?? {};
+      }
+
+      if (comp.type === "hero" && comp.variant.endsWith("-video")) {
+        const familiaVideos: Record<string, string> = {
+          calido: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5Doazq8PBXcXNn8FCzQM9bTy4BedivlkpsRUwm",
+          elegante: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DKQQEqDMNY9kd8fWFj7AX0DnR3VMweUBT4gHE",
+          lujoso: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5D9EyxTm2UKMLxod1C4WjAcsqSlpFmbOgtziGT",
+          clinico: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DVaY0YarmN21v3p5XSbUlezhQ7L4kwFPGZCnE",
+        };
+        content = { ...content, videoUrl: familiaVideos[preset.familia] ?? familiaVideos.calido };
       }
 
       await ctx.db.insert("pageSections", {
