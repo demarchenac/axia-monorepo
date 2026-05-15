@@ -440,6 +440,25 @@ export default defineSchema({
     .index("by_tenant", ["tenantId"])
     .index("by_tenant_status", ["tenantId", "status"]),
 
+  presetCopies: defineTable({
+    tenantId: v.id("tenants"),
+    presetSlug: v.string(),
+    sections: v.array(
+      v.object({
+        type: v.string(),
+        variant: v.string(),
+        order: v.number(),
+        content: v.any(),
+        visible: v.boolean(),
+      }),
+    ),
+    tokens: v.any(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_tenant_preset", ["tenantId", "presetSlug"])
+    .index("by_tenant", ["tenantId"]),
+
   // ─────────────────────────────────────────────────
   // SEED CONTENT
   // ─────────────────────────────────────────────────

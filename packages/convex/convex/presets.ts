@@ -826,6 +826,106 @@ const countryCodes: Record<string, string> = {
   ES: "España",
 };
 
+async function buildFreshSections(
+  ctx: any,
+  preset: any,
+  tenantId: Id<"tenants">,
+) {
+  const tenantContent = await buildContentFromTenant(ctx, tenantId, preset.familia);
+  const hasVideoHero = preset.sectionComposition.some(
+    (c: any) => c.type === "hero" && c.variant.endsWith("-video"),
+  );
+
+  const sections = [];
+  for (const comp of preset.sectionComposition) {
+    let content: Record<string, unknown> = {};
+
+    if (comp.contentKey) {
+      const seed = await ctx.db
+        .query("seedContent")
+        .withIndex("by_industry_section_key", (q: any) =>
+          q
+            .eq("industry", preset.industry)
+            .eq("sectionType", comp.type)
+            .eq("contentKey", comp.contentKey!),
+        )
+        .first();
+      if (seed) content = seed.content as Record<string, unknown>;
+    }
+
+    if (Object.keys(content).length === 0) {
+      content = tenantContent[comp.type] ?? defaultContent[comp.type] ?? {};
+    }
+
+    if (comp.type === "header" && hasVideoHero) {
+      content = { ...content, overlay: true };
+    }
+    if (comp.type === "hero" && comp.variant.endsWith("-video")) {
+      content = { ...content, videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido };
+    }
+
+    sections.push({
+      type: comp.type as string,
+      variant: comp.variant as string,
+      order: comp.order as number,
+      content,
+      visible: true,
+    });
+  }
+
+  return sections;
+}
+
+async function writeSectionsToPage(
+  ctx: any,
+  pageId: Id<"tenantPages">,
+  sections: Array<{ type: string; variant: string; order: number; content: any; visible: boolean }>,
+) {
+  const now = Date.now();
+  const existing = await ctx.db
+    .query("pageSections")
+    .withIndex("by_page_order", (q: any) => q.eq("pageId", pageId))
+    .collect();
+  await Promise.all(existing.map((s: any) => ctx.db.delete(s._id)));
+  await ctx.db.patch(pageId, { updatedAt: now });
+
+  for (const s of sections) {
+    await ctx.db.insert("pageSections", {
+      pageId,
+      ...s,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+}
+
+async function applyDesignTokens(
+  ctx: any,
+  tenantId: Id<"tenants">,
+  presetSlug: string,
+  tokens: any,
+) {
+  const now = Date.now();
+  const existing = await ctx.db
+    .query("designTokens")
+    .withIndex("by_tenant_active", (q: any) =>
+      q.eq("tenantId", tenantId).eq("isActive", true),
+    )
+    .collect();
+  await Promise.all(
+    existing.map((t: any) => ctx.db.patch(t._id, { isActive: false, updatedAt: now })),
+  );
+  await ctx.db.insert("designTokens", {
+    tenantId,
+    name: presetSlug,
+    tokens,
+    isActive: true,
+    basedOnPresetSlug: presetSlug,
+    createdAt: now,
+    updatedAt: now,
+  });
+}
+
 export const applyToTenant = mutation({
   args: {
     tenantId: v.id("tenants"),
@@ -840,7 +940,28 @@ export const applyToTenant = mutation({
 
     const now = Date.now();
 
-    const tenantContent = await buildContentFromTenant(ctx, tenantId, preset.familia);
+    const existingCopy = await ctx.db
+      .query("presetCopies")
+      .withIndex("by_tenant_preset", (q) =>
+        q.eq("tenantId", tenantId).eq("presetSlug", presetSlug),
+      )
+      .first();
+
+    let sections: Array<{ type: string; variant: string; order: number; content: any; visible: boolean }>;
+
+    if (existingCopy) {
+      sections = existingCopy.sections;
+    } else {
+      sections = await buildFreshSections(ctx, preset, tenantId);
+      await ctx.db.insert("presetCopies", {
+        tenantId,
+        presetSlug,
+        sections,
+        tokens: preset.tokens,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
 
     const existingPage = await ctx.db
       .query("tenantPages")
@@ -850,12 +971,6 @@ export const applyToTenant = mutation({
     let pageId: Id<"tenantPages">;
     if (existingPage) {
       pageId = existingPage._id;
-      const existingSections = await ctx.db
-        .query("pageSections")
-        .withIndex("by_page_order", (q) => q.eq("pageId", pageId))
-        .collect();
-      await Promise.all(existingSections.map((s) => ctx.db.delete(s._id)));
-      await ctx.db.patch(pageId, { updatedAt: now });
     } else {
       pageId = await ctx.db.insert("tenantPages", {
         tenantId,
@@ -865,70 +980,8 @@ export const applyToTenant = mutation({
       });
     }
 
-    const hasVideoHero = preset.sectionComposition.some(
-      (c) => c.type === "hero" && c.variant.endsWith("-video"),
-    );
-
-    for (const comp of preset.sectionComposition) {
-      let content: Record<string, unknown> = {};
-
-      if (comp.contentKey) {
-        const seed = await ctx.db
-          .query("seedContent")
-          .withIndex("by_industry_section_key", (q) =>
-            q
-              .eq("industry", preset.industry)
-              .eq("sectionType", comp.type)
-              .eq("contentKey", comp.contentKey!),
-          )
-          .first();
-        if (seed) content = seed.content as Record<string, unknown>;
-      }
-
-      if (Object.keys(content).length === 0) {
-        content = tenantContent[comp.type] ?? defaultContent[comp.type] ?? {};
-      }
-
-      if (comp.type === "header" && hasVideoHero) {
-        content = { ...content, overlay: true };
-      }
-      if (comp.type === "hero" && comp.variant.endsWith("-video")) {
-        content = { ...content, videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido };
-      }
-
-      await ctx.db.insert("pageSections", {
-        pageId,
-        type: comp.type,
-        variant: comp.variant,
-        order: comp.order,
-        content,
-        visible: true,
-        createdAt: now,
-        updatedAt: now,
-      });
-    }
-
-    // Apply design tokens from preset
-    const existingTokens = await ctx.db
-      .query("designTokens")
-      .withIndex("by_tenant_active", (q) =>
-        q.eq("tenantId", tenantId).eq("isActive", true),
-      )
-      .collect();
-    await Promise.all(
-      existingTokens.map((t) =>
-        ctx.db.patch(t._id, { isActive: false, updatedAt: now }),
-      ),
-    );
-    await ctx.db.insert("designTokens", {
-      tenantId,
-      name: preset.slug,
-      tokens: preset.tokens,
-      isActive: true,
-      basedOnPresetSlug: presetSlug,
-      createdAt: now,
-      updatedAt: now,
-    });
+    await writeSectionsToPage(ctx, pageId, sections);
+    await applyDesignTokens(ctx, tenantId, presetSlug, existingCopy?.tokens ?? preset.tokens);
 
     await ctx.db.insert("tenantPreviews", {
       tenantId,
@@ -939,5 +992,89 @@ export const applyToTenant = mutation({
     });
 
     return pageId;
+  },
+});
+
+export const resetPresetCopy = mutation({
+  args: {
+    tenantId: v.id("tenants"),
+    presetSlug: v.string(),
+  },
+  handler: async (ctx, { tenantId, presetSlug }) => {
+    const preset = await ctx.db
+      .query("previewPresets")
+      .withIndex("by_slug", (q) => q.eq("slug", presetSlug))
+      .first();
+    if (!preset) throw new Error("Preset not found");
+
+    const now = Date.now();
+    const freshSections = await buildFreshSections(ctx, preset, tenantId);
+
+    const existingCopy = await ctx.db
+      .query("presetCopies")
+      .withIndex("by_tenant_preset", (q) =>
+        q.eq("tenantId", tenantId).eq("presetSlug", presetSlug),
+      )
+      .first();
+
+    if (existingCopy) {
+      await ctx.db.patch(existingCopy._id, {
+        sections: freshSections,
+        tokens: preset.tokens,
+        updatedAt: now,
+      });
+    } else {
+      await ctx.db.insert("presetCopies", {
+        tenantId,
+        presetSlug,
+        sections: freshSections,
+        tokens: preset.tokens,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    const page = await ctx.db
+      .query("tenantPages")
+      .withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
+      .first();
+    if (page) {
+      await writeSectionsToPage(ctx, page._id, freshSections);
+    }
+
+    await applyDesignTokens(ctx, tenantId, presetSlug, preset.tokens);
+  },
+});
+
+export const getActivePresetCopy = query({
+  args: { tenantId: v.id("tenants") },
+  handler: async (ctx, { tenantId }) => {
+    const activeTokens = await ctx.db
+      .query("designTokens")
+      .withIndex("by_tenant_active", (q) =>
+        q.eq("tenantId", tenantId).eq("isActive", true),
+      )
+      .first();
+    if (!activeTokens?.basedOnPresetSlug) return null;
+
+    const copy = await ctx.db
+      .query("presetCopies")
+      .withIndex("by_tenant_preset", (q) =>
+        q.eq("tenantId", tenantId).eq("presetSlug", activeTokens.basedOnPresetSlug!),
+      )
+      .first();
+
+    return copy ? { presetSlug: activeTokens.basedOnPresetSlug!, copyId: copy._id } : null;
+  },
+});
+
+export const getPresetCopiesForTenant = query({
+  args: { tenantId: v.id("tenants") },
+  handler: async (ctx, { tenantId }) => {
+    const copies = await ctx.db
+      .query("presetCopies")
+      .withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
+      .collect();
+    return copies.map((c) => c.presetSlug);
   },
 });

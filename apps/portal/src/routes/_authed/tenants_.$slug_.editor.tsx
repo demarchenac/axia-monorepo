@@ -50,9 +50,13 @@ function EditorPage() {
   const toggleVisibility = useMutation(api.pages.toggleVisibility)
   const deleteSection = useMutation(api.pages.deleteSection)
 
+  const activePresetCopy = useQuery(api.presets.getActivePresetCopy, tenant ? { tenantId: tenant._id } : 'skip')
+  const resetCopy = useMutation(api.presets.resetPresetCopy)
+
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const [addingSection, setAddingSection] = useState(false)
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop')
+  const [resetting, setResetting] = useState(false)
 
   if (!tenant || page === undefined) {
     return <div className="p-8 text-sm text-muted-foreground">Cargando...</div>
@@ -117,6 +121,25 @@ function EditorPage() {
           </Link>
           <span className="text-muted-foreground">/</span>
           <h1 className="text-lg font-semibold tracking-tight">Editor</h1>
+          {activePresetCopy && (
+            <button
+              onClick={async () => {
+                if (!tenant || !activePresetCopy) return
+                setResetting(true)
+                try {
+                  await resetCopy({ tenantId: tenant._id, presetSlug: activePresetCopy.presetSlug })
+                } finally {
+                  setResetting(false)
+                }
+              }}
+              disabled={resetting}
+              className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+              title="Restablecer al preset original"
+            >
+              <RotateCcw className={`size-3 ${resetting ? 'animate-spin' : ''}`} />
+              Restablecer
+            </button>
+          )}
         </div>
 
         {!page ? (

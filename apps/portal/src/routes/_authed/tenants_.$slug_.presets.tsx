@@ -28,6 +28,7 @@ function PresetSelector() {
   const presets = useQuery(api.presets.getByIndustry, { industry: tenant?.industry ?? 'dental' })
   const applyPreset = useMutation(api.presets.applyToTenant)
   const generateToken = useMutation(api.tenants.generatePreviewToken)
+  const existingCopies = useQuery(api.presets.getPresetCopiesForTenant, tenant ? { tenantId: tenant._id } : 'skip')
   const [applying, setApplying] = useState<string | null>(null)
   const [applied, setApplied] = useState<string | null>(null)
 
@@ -109,6 +110,7 @@ function PresetSelector() {
                       applied={applied}
                       onApply={handleApply}
                       previewToken={tenant.previewToken}
+                      hasExistingCopy={existingCopies?.includes(preset.slug) ?? false}
                     />
                   ))}
                 </div>
@@ -128,6 +130,7 @@ function PresetCard({
   applied,
   onApply,
   previewToken,
+  hasExistingCopy,
 }: {
   preset: { _id: string; slug: string; name: unknown; description: unknown }
   slug: string
@@ -135,13 +138,19 @@ function PresetCard({
   applied: string | null
   onApply: (slug: string) => void
   previewToken?: string
+  hasExistingCopy: boolean
 }) {
   return (
     <div className="group w-[380px] shrink-0 overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-lg">
       <PresetThumbnail presetSlug={preset.slug} tenantSlug={slug} />
       <div className="px-4 py-3">
-        <h3 className="text-sm font-semibold">
+        <h3 className="flex items-center gap-2 text-sm font-semibold">
           {(preset.name as Record<string, string>).es ?? preset.slug}
+          {hasExistingCopy && (
+            <span className="rounded bg-muted px-1.5 py-0.5 text-[0.6rem] font-medium text-muted-foreground">
+              Editado
+            </span>
+          )}
         </h3>
         <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
           {(preset.description as Record<string, string>).es ?? ''}
