@@ -1475,13 +1475,31 @@ function EditorPreview({
     visible: s.visible,
   }))
 
+  function handlePreviewClick(e: React.MouseEvent) {
+    const anchor = (e.target as HTMLElement).closest('a')
+    if (!anchor) return
+    const href = anchor.getAttribute('href')
+    if (!href) return
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (href.startsWith('#')) {
+      const target = e.currentTarget.querySelector(href)
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else if (href.startsWith('http')) {
+      window.open(href, '_blank', 'noopener')
+    }
+  }
+
   return (
     <div
-      className="preset-isolation pointer-events-none relative overflow-hidden"
+      className="preset-isolation relative overflow-hidden"
       style={{
         background: themeTokens['--bg'] ?? '#fff',
         color: themeTokens['--fg'] ?? '#000',
       }}
+      onClick={handlePreviewClick}
     >
       <TokenProvider tokens={themeTokens}>
         <SectionRenderer sections={mapped} locale={locale} />
