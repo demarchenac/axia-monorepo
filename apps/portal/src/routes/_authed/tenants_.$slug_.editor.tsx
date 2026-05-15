@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@talvu/ui/components/card'
 import { Badge } from '@talvu/ui/components/badge'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@talvu/ui/components/resizable'
+import { useSidebar } from '@talvu/ui/components/sidebar'
 import { usePanelRef, type PanelSize } from 'react-resizable-panels'
 import {
   ArrowLeft, Plus, ChevronUp, ChevronDown, Eye, EyeOff, Pencil,
@@ -55,6 +56,12 @@ function EditorPage() {
 
   const activePresetCopy = useQuery(api.presets.getActivePresetCopy, tenant ? { tenantId: tenant._id } : 'skip')
   const resetCopy = useMutation(api.presets.resetPresetCopy)
+
+  const { setOpen: setNavSidebarOpen } = useSidebar()
+  useEffect(() => {
+    setNavSidebarOpen(false)
+    return () => setNavSidebarOpen(true)
+  }, [setNavSidebarOpen])
 
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const [addingSection, setAddingSection] = useState(false)
@@ -113,9 +120,9 @@ function EditorPage() {
       {/* Left panel — section list */}
       <ResizablePanel
         panelRef={sidebarRef}
-        defaultSize={40}
-        minSize={25}
-        maxSize={55}
+        defaultSize={50}
+        minSize={30}
+        maxSize={65}
         collapsible
         collapsedSize={0}
         onResize={(size: PanelSize) => {
@@ -288,14 +295,14 @@ function EditorPage() {
       <ResizableHandle withHandle />
 
       {/* Right panel — live preview */}
-      <ResizablePanel defaultSize={60}>
+      <ResizablePanel defaultSize={50}>
       <div className="flex h-full flex-col bg-muted/30">
         <div className="flex items-center justify-between border-b bg-background px-4 py-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
                 if (sidebarCollapsed) {
-                  sidebarRef.current?.resize(40)
+                  sidebarRef.current?.resize(50)
                 } else {
                   sidebarRef.current?.collapse()
                 }
