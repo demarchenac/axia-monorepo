@@ -2,6 +2,22 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
 import { useState } from 'react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { Card, CardContent, CardHeader, CardTitle } from '@talvu/ui/components/card'
 import { Badge } from '@talvu/ui/components/badge'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@talvu/ui/components/resizable'
@@ -54,6 +70,11 @@ function EditorPage() {
   const activePresetCopy = useQuery(api.presets.getActivePresetCopy, tenant ? { tenantId: tenant._id } : 'skip')
   const resetCopy = useMutation(api.presets.resetPresetCopy)
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const [addingSection, setAddingSection] = useState(false)
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop')
@@ -64,6 +85,18 @@ function EditorPage() {
   }
 
   const sections = page?.sections ?? []
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = sections.findIndex((s: any) => s._id === active.id)
+    const newIndex = sections.findIndex((s: any) => s._id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+    const ids = sections.map((s: any) => s._id)
+    const [moved] = ids.splice(oldIndex, 1)
+    ids.splice(newIndex, 0, moved)
+    await reorderSections({ sectionIds: ids })
+  }
 
   async function handleCreatePage() {
     if (!tenant) return
@@ -167,81 +200,26 @@ function EditorPage() {
         ) : (
           <>
             {/* Section list */}
-            <div className="space-y-2">
-              {sections.map((section: any, index: number) => {
-                const catalogEntry = SECTION_CATALOG.find((c) => c.type === section.type)
-                const label = catalogEntry
-                  ? resolve(catalogEntry.label, 'es')
-                  : section.type
-
-                return (
-                  <div
-                    key={section._id}
-                    className={`group flex items-center gap-2 rounded-lg border p-3 transition-colors ${
-                      editingSection === section._id
-                        ? 'border-primary bg-primary/5'
-                        : 'hover:border-foreground/20'
-                    } ${!section.visible ? 'opacity-50' : ''}`}
-                  >
-                    <GripVertical className="size-4 shrink-0 text-muted-foreground/40" />
-
-                    <span className="text-base">{sectionTypeIcons[section.type] ?? '📄'}</span>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium">{label}</div>
-                      <div className="text-[0.65rem] text-muted-foreground">
-                        {section.variant}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-0.5">
-                      <IconButton
-                        onClick={() => handleMoveUp(index)}
-                        disabled={index === 0}
-                        title="Subir"
-                      >
-                        <ChevronUp className="size-3.5" />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleMoveDown(index)}
-                        disabled={index === sections.length - 1}
-                        title="Bajar"
-                      >
-                        <ChevronDown className="size-3.5" />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => toggleVisibility({ sectionId: section._id })}
-                        title={section.visible ? 'Ocultar' : 'Mostrar'}
-                      >
-                        {section.visible ? (
-                          <Eye className="size-3.5" />
-                        ) : (
-                          <EyeOff className="size-3.5" />
-                        )}
-                      </IconButton>
-                      <IconButton
-                        onClick={() =>
-                          setEditingSection(
-                            editingSection === section._id ? null : section._id,
-                          )
-                        }
-                        title="Editar contenido"
-                        active={editingSection === section._id}
-                      >
-                        <Pencil className="size-3.5" />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDelete(section._id)}
-                        title="Eliminar"
-                        destructive
-                      >
-                        <Trash2 className="size-3.5" />
-                      </IconButton>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={sections.map((s: any) => s._id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-2">
+                  {sections.map((section: any, index: number) => (
+                    <SortableSectionItem
+                      key={section._id}
+                      section={section}
+                      index={index}
+                      totalSections={sections.length}
+                      isEditing={editingSection === section._id}
+                      onMoveUp={() => handleMoveUp(index)}
+                      onMoveDown={() => handleMoveDown(index)}
+                      onToggleVisibility={() => toggleVisibility({ sectionId: section._id })}
+                      onToggleEdit={() => setEditingSection(editingSection === section._id ? null : section._id)}
+                      onDelete={() => handleDelete(section._id)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
 
             {/* Add section */}
             {addingSection ? (
@@ -1508,6 +1486,88 @@ function EditorPreview({
       <TokenProvider tokens={themeTokens}>
         <SectionRenderer sections={mapped} locale={locale} />
       </TokenProvider>
+    </div>
+  )
+}
+
+function SortableSectionItem({
+  section,
+  index,
+  totalSections,
+  isEditing,
+  onMoveUp,
+  onMoveDown,
+  onToggleVisibility,
+  onToggleEdit,
+  onDelete,
+}: {
+  section: any
+  index: number
+  totalSections: number
+  isEditing: boolean
+  onMoveUp: () => void
+  onMoveDown: () => void
+  onToggleVisibility: () => void
+  onToggleEdit: () => void
+  onDelete: () => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: section._id,
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : undefined,
+    opacity: isDragging ? 0.8 : undefined,
+  }
+
+  const catalogEntry = SECTION_CATALOG.find((c) => c.type === section.type)
+  const label = catalogEntry ? resolve(catalogEntry.label, 'es') : section.type
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`group flex items-center gap-2 rounded-lg border p-3 transition-colors ${
+        isEditing
+          ? 'border-primary bg-primary/5'
+          : 'hover:border-foreground/20'
+      } ${!section.visible ? 'opacity-50' : ''} ${isDragging ? 'shadow-lg' : ''}`}
+    >
+      <button
+        type="button"
+        className="cursor-grab touch-none text-muted-foreground/40 hover:text-muted-foreground active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-4" />
+      </button>
+
+      <span className="text-base">{sectionTypeIcons[section.type] ?? '📄'}</span>
+
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-[0.65rem] text-muted-foreground">{section.variant}</div>
+      </div>
+
+      <div className="flex items-center gap-0.5">
+        <IconButton onClick={onMoveUp} disabled={index === 0} title="Subir">
+          <ChevronUp className="size-3.5" />
+        </IconButton>
+        <IconButton onClick={onMoveDown} disabled={index === totalSections - 1} title="Bajar">
+          <ChevronDown className="size-3.5" />
+        </IconButton>
+        <IconButton onClick={onToggleVisibility} title={section.visible ? 'Ocultar' : 'Mostrar'}>
+          {section.visible ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
+        </IconButton>
+        <IconButton onClick={onToggleEdit} title="Editar contenido" active={isEditing}>
+          <Pencil className="size-3.5" />
+        </IconButton>
+        <IconButton onClick={onDelete} title="Eliminar" destructive>
+          <Trash2 className="size-3.5" />
+        </IconButton>
+      </div>
     </div>
   )
 }
