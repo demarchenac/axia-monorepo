@@ -1477,7 +1477,7 @@ function EditorPreview({
 
   return (
     <div
-      className="preset-isolation relative overflow-hidden"
+      className="preset-isolation pointer-events-none relative overflow-hidden"
       style={{
         background: themeTokens['--bg'] ?? '#fff',
         color: themeTokens['--fg'] ?? '#000',
