@@ -113,9 +113,9 @@ function EditorPage() {
       {/* Left panel — section list */}
       <ResizablePanel
         panelRef={sidebarRef}
-        defaultSize={35}
-        minSize={20}
-        maxSize={50}
+        defaultSize={40}
+        minSize={25}
+        maxSize={55}
         collapsible
         collapsedSize={0}
         onResize={(size: PanelSize) => {
@@ -288,14 +288,14 @@ function EditorPage() {
       <ResizableHandle withHandle />
 
       {/* Right panel — live preview */}
-      <ResizablePanel defaultSize={65}>
+      <ResizablePanel defaultSize={60}>
       <div className="flex h-full flex-col bg-muted/30">
         <div className="flex items-center justify-between border-b bg-background px-4 py-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
                 if (sidebarCollapsed) {
-                  sidebarRef.current?.resize({ sizePercentage: 35 })
+                  sidebarRef.current?.resize(40)
                 } else {
                   sidebarRef.current?.collapse()
                 }
