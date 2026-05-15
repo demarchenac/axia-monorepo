@@ -11,6 +11,9 @@ import {
 } from 'lucide-react'
 import { SECTION_CATALOG } from '@talvu/blocks/sections/catalog'
 import { resolve } from '@talvu/blocks/lib/content-helpers'
+import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
+import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
+import type { ThemeTokens } from '@talvu/blocks/lib/theme-tokens'
 
 export const Route = createFileRoute('/_authed/tenants_/$slug_/editor')({
   component: EditorPage,
@@ -39,6 +42,7 @@ function EditorPage() {
   const { slug } = Route.useParams()
   const tenant = useQuery(api.tenants.getBySlug, { slug })
   const page = useQuery(api.pages.getByTenant, tenant ? { tenantId: tenant._id } : 'skip')
+  const activeTokens = useQuery(api.designTokens.getActive, tenant ? { tenantId: tenant._id } : 'skip')
 
   const createPage = useMutation(api.pages.createPage)
   const upsertSection = useMutation(api.pages.upsertSection)
@@ -267,13 +271,13 @@ function EditorPage() {
 
         <div className="flex-1 flex items-start justify-center overflow-auto p-4">
           <div
-            className="h-full bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300"
+            className="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300"
             style={{ width: previewWidths[previewDevice], maxWidth: '100%' }}
           >
-            <iframe
-              src={`http://localhost:3000/t/${slug}`}
-              className="h-full w-full border-0"
-              title="Landing preview"
+            <EditorPreview
+              sections={sections}
+              tokens={activeTokens?.tokens as ThemeTokens | undefined}
+              locale={tenant?.defaultLocale ?? 'es'}
             />
           </div>
         </div>
@@ -1435,5 +1439,40 @@ function IconButton({
     >
       {children}
     </button>
+  )
+}
+
+function EditorPreview({
+  sections,
+  tokens,
+  locale,
+}: {
+  sections: Array<{ _id: string; type: string; variant: string; order: number; content: any; visible: boolean }>
+  tokens?: ThemeTokens
+  locale: string
+}) {
+  const themeTokens = (tokens ?? {}) as ThemeTokens & Record<string, string>
+
+  const mapped = sections.map((s) => ({
+    id: s._id,
+    type: s.type,
+    variant: s.variant,
+    order: s.order,
+    content: s.content,
+    visible: s.visible,
+  }))
+
+  return (
+    <div
+      className="preset-isolation relative overflow-hidden"
+      style={{
+        background: themeTokens['--bg'] ?? '#fff',
+        color: themeTokens['--fg'] ?? '#000',
+      }}
+    >
+      <TokenProvider tokens={themeTokens}>
+        <SectionRenderer sections={mapped} locale={locale} />
+      </TokenProvider>
+    </div>
   )
 }
