@@ -16,7 +16,7 @@ export function PresetPreview({
   token: string
 }) {
   const tenant = useQuery(api.tenants.validatePreviewToken, { slug, token })
-  const preview = useQuery(api.presets.resolvePreview, { presetSlug })
+  const preview = useQuery(api.presets.resolvePreview, { presetSlug, slug })
 
   if (tenant === undefined || preview === undefined) {
     return (

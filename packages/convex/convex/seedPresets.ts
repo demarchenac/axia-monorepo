@@ -334,32 +334,38 @@ const presets = [
 export const run = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const existing = await ctx.db.query("previewPresets").first();
-    if (existing) {
-      console.log("Presets already seeded, skipping.");
-      return;
+    const existing = await ctx.db.query("previewPresets").collect();
+    if (existing.length > 0) {
+      for (const p of existing) {
+        await ctx.db.delete(p._id);
+      }
+      console.log(`Cleared ${existing.length} existing presets.`);
     }
 
     const now = Date.now();
 
     for (const p of presets) {
-      const isVideo = false;
-      await ctx.db.insert("previewPresets", {
-        slug: p.slug,
-        name: p.name,
-        description: p.description,
-        industry: "dental",
-        familia: p.familia,
-        tokens: p.tokens,
-        sectionComposition: familySections(p.familia, isVideo),
-        headerVariant: p.familia,
-        footerVariant: p.familia,
-        active: true,
-        thumbnailUrl: undefined,
-        createdAt: now,
-      });
+      for (const isVideo of [false, true]) {
+        const suffix = isVideo ? "-video" : "";
+        const nameEs = (p.name as Record<string, string>).es ?? p.slug;
+        const descEs = (p.description as Record<string, string>).es ?? "";
+        await ctx.db.insert("previewPresets", {
+          slug: `${p.slug}${suffix}`,
+          name: { es: isVideo ? `${nameEs} (Video)` : nameEs },
+          description: { es: isVideo ? `${descEs} Con hero en video.` : descEs },
+          industry: "dental",
+          familia: p.familia,
+          tokens: p.tokens,
+          sectionComposition: familySections(p.familia, isVideo),
+          headerVariant: p.familia,
+          footerVariant: p.familia,
+          active: true,
+          thumbnailUrl: undefined,
+          createdAt: now,
+        });
+      }
     }
 
-    console.log(`Seeded ${presets.length} preview presets.`);
+    console.log(`Seeded ${presets.length * 2} preview presets (image + video).`);
   },
 });

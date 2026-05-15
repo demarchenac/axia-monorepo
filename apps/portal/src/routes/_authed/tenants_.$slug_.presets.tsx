@@ -1,8 +1,15 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft, Check, ExternalLink, Eye, Loader2 } from 'lucide-react'
+import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
+import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
+import type { ThemeTokens } from '@talvu/blocks/lib/theme-tokens'
+
+const LANDING_URL = import.meta.env.VITE_LANDING_URL ?? 'http://localhost:3000'
+const PREVIEW_WIDTH = 1440
+const CARD_WIDTH = 380
 
 export const Route = createFileRoute('/_authed/tenants_/$slug_/presets')({
   component: PresetSelector,
@@ -20,8 +27,15 @@ function PresetSelector() {
   const tenant = useQuery(api.tenants.getBySlug, { slug })
   const presets = useQuery(api.presets.getByIndustry, { industry: tenant?.industry ?? 'dental' })
   const applyPreset = useMutation(api.presets.applyToTenant)
+  const generateToken = useMutation(api.tenants.generatePreviewToken)
   const [applying, setApplying] = useState<string | null>(null)
   const [applied, setApplied] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (tenant && !tenant.previewToken) {
+      generateToken({ id: tenant._id })
+    }
+  }, [tenant, generateToken])
 
   if (!tenant || presets === undefined) {
     return <div className="p-8 text-sm text-muted-foreground">Cargando...</div>
@@ -68,7 +82,7 @@ function PresetSelector() {
           <Check className="size-4" />
           Preset <strong>{applied}</strong> aplicado.
           <a
-            href={`http://localhost:3000/t/${slug}`}
+            href={`${LANDING_URL}/t/${slug}`}
             target="_blank"
             rel="noopener"
             className="ml-1 inline-flex items-center gap-1 font-medium underline"
@@ -79,71 +93,126 @@ function PresetSelector() {
       )}
 
       {Object.entries(grouped).map(([familia, familiaPresets]) => (
-        <div key={familia} className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold">{familiaLabels[familia] ?? familia}</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {familiaPresets.map((preset) => (
-              <div
-                key={preset._id}
-                className="overflow-hidden rounded-lg border transition-shadow hover:shadow-md"
-              >
-                <div
-                  className="flex h-24 items-end p-3"
-                  style={{
-                    background: (preset.tokens as Record<string, string>)['--bg'] ?? '#fff',
-                    color: (preset.tokens as Record<string, string>)['--fg'] ?? '#000',
-                  }}
-                >
-                  <div className="flex gap-2">
-                    {['--primary', '--accent', '--bg-alt', '--border'].map((token) => (
-                      <div
-                        key={token}
-                        className="size-6 rounded-full border border-white/20"
-                        style={{
-                          background:
-                            (preset.tokens as Record<string, string>)[token] ?? '#ccc',
-                        }}
-                        title={token}
-                      />
-                    ))}
-                  </div>
+        <div key={familia} className="mb-10">
+          <h2 className="mb-3 text-lg font-semibold">{familiaLabels[familia] ?? familia}</h2>
+          <div className="flex flex-wrap gap-5">
+            {Array.from({ length: Math.ceil(familiaPresets.length / 2) }, (_, i) => {
+              const pair = familiaPresets.slice(i * 2, i * 2 + 2)
+              return (
+                <div key={i} className="flex gap-5">
+                  {pair.map((preset) => (
+                    <PresetCard
+                      key={preset._id}
+                      preset={preset}
+                      slug={slug}
+                      applying={applying}
+                      applied={applied}
+                      onApply={handleApply}
+                      previewToken={tenant.previewToken}
+                    />
+                  ))}
                 </div>
-                <div className="p-4">
-                  <h3 className="font-medium">
-                    {(preset.name as Record<string, string>).es ?? preset.slug}
-                  </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {(preset.description as Record<string, string>).es ?? ''}
-                  </p>
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={() => handleApply(preset.slug)}
-                      disabled={applying !== null}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-                    >
-                      {applying === preset.slug ? (
-                        <><Loader2 className="size-3 animate-spin" /> Aplicando...</>
-                      ) : applied === preset.slug ? (
-                        <><Check className="size-3" /> Aplicado</>
-                      ) : (
-                        'Aplicar'
-                      )}
-                    </button>
-                    <a
-                      href={`http://localhost:3000/${familia}/${preset.slug.split('-').slice(1).join('-')}`}
-                      target="_blank"
-                      rel="noopener"
-                      className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
-                    >
-                      <Eye className="size-3" /> Preview
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+function PresetCard({
+  preset,
+  slug,
+  applying,
+  applied,
+  onApply,
+  previewToken,
+}: {
+  preset: { _id: string; slug: string; name: unknown; description: unknown }
+  slug: string
+  applying: string | null
+  applied: string | null
+  onApply: (slug: string) => void
+  previewToken?: string
+}) {
+  return (
+    <div className="group w-[380px] shrink-0 overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-lg">
+      <PresetThumbnail presetSlug={preset.slug} tenantSlug={slug} />
+      <div className="px-4 py-3">
+        <h3 className="text-sm font-semibold">
+          {(preset.name as Record<string, string>).es ?? preset.slug}
+        </h3>
+        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+          {(preset.description as Record<string, string>).es ?? ''}
+        </p>
+        <div className="mt-2.5 flex gap-2">
+          <button
+            onClick={() => onApply(preset.slug)}
+            disabled={applying !== null}
+            className="inline-flex h-7 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            {applying === preset.slug ? (
+              <><Loader2 className="size-3 animate-spin" /> Aplicando...</>
+            ) : applied === preset.slug ? (
+              <><Check className="size-3" /> Aplicado</>
+            ) : (
+              'Aplicar'
+            )}
+          </button>
+          {previewToken && (
+            <a
+              href={`${LANDING_URL}/t/${slug}/preview/${preset.slug}?token=${previewToken}`}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-muted"
+            >
+              <Eye className="size-3" /> Preview
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PresetThumbnail({ presetSlug, tenantSlug }: { presetSlug: string; tenantSlug: string }) {
+  const preview = useQuery(api.presets.resolvePreview, { presetSlug, slug: tenantSlug })
+
+  if (!preview) {
+    return (
+      <div className="flex aspect-[16/10] items-center justify-center bg-muted text-sm text-muted-foreground">
+        Cargando preview...
+      </div>
+    )
+  }
+
+  const sections = preview.sections.map((s, i) => ({
+    id: `preview-${i}`,
+    type: s.type,
+    variant: s.variant,
+    order: s.order,
+    content: s.content,
+    visible: s.visible,
+  }))
+
+  const tokens = (preview.preset.tokens ?? {}) as ThemeTokens & Record<string, string>
+
+  return (
+    <div className="relative aspect-[16/10] overflow-hidden">
+      <div
+        className="preset-isolation pointer-events-none origin-top-left"
+        style={{
+          width: PREVIEW_WIDTH,
+          transform: `scale(${CARD_WIDTH / PREVIEW_WIDTH})`,
+          background: tokens['--bg'] ?? '#fff',
+          color: tokens['--fg'] ?? '#000',
+        }}
+      >
+        <TokenProvider tokens={tokens}>
+          <SectionRenderer sections={sections} locale="es" />
+        </TokenProvider>
+      </div>
     </div>
   )
 }

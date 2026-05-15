@@ -43,6 +43,8 @@ type FamiliaCopy = {
       extraText: string;
     };
     highlightStat?: { value: string; label: string };
+    quote?: string;
+    quoteAttribution?: string;
   };
   services: { eyebrow: string; heading: string; subheading: string };
   team: { eyebrow: string; heading: string; subheading: string };
@@ -151,14 +153,17 @@ const familyCopies: Record<string, FamiliaCopy> = {
       ctaLabel: "Reservar cita",
     },
     hero: {
-      heading: "Una sonrisa extraordinaria merece manos extraordinarias.",
-      headingAccent: "extraordinaria",
+      heading: "Una sonrisa extraordinaria merece manos",
+      headingAccent: "extraordinarias.",
       subheading:
         "Cada tratamiento en {name} es una obra hecha a medida. Tecnología alemana, materiales suizos, atención de boutique.",
       badge: "— Atelier Odontológico —",
       ctaLabel: "Reservar valoración",
+      ctaSecondaryLabel: "Conocer especialidades",
       imageUrl:
         "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1000&q=85",
+      quote: "Una experiencia digna de un hotel cinco estrellas.",
+      quoteAttribution: "Vogue España, 2025",
     },
     services: {
       eyebrow: "Especialidades",
@@ -503,31 +508,39 @@ const defaultContent: Record<string, Record<string, unknown>> = {
 };
 
 export const resolvePreview = query({
-  args: { presetSlug: v.string() },
-  handler: async (ctx, { presetSlug }) => {
+  args: { presetSlug: v.string(), slug: v.optional(v.string()) },
+  handler: async (ctx, { presetSlug, slug }) => {
     const preset = await ctx.db
       .query("previewPresets")
       .withIndex("by_slug", (q) => q.eq("slug", presetSlug))
       .first();
     if (!preset) return null;
 
+    let contentMap: Record<string, Record<string, unknown>> = defaultContent;
+    if (slug) {
+      const tenant = await ctx.db
+        .query("tenants")
+        .withIndex("by_slug", (q) => q.eq("slug", slug))
+        .first();
+      if (tenant) {
+        contentMap = await buildContentFromTenant(ctx, tenant._id, preset.familia);
+      }
+    }
+
     const sections = [];
     for (const comp of preset.sectionComposition) {
-      let content: Record<string, unknown> = {};
-      if (comp.contentKey) {
-        const seed = await ctx.db
-          .query("seedContent")
-          .withIndex("by_industry_section_key", (q) =>
-            q
-              .eq("industry", preset.industry)
-              .eq("sectionType", comp.type)
-              .eq("contentKey", comp.contentKey!),
-          )
-          .first();
-        if (seed) content = seed.content as Record<string, unknown>;
-      }
-      if (Object.keys(content).length === 0) {
-        content = defaultContent[comp.type] ?? {};
+      let content = contentMap[comp.type] ?? defaultContent[comp.type] ?? {};
+      if (comp.type === "hero" && comp.variant.endsWith("-video")) {
+        const familiaVideos: Record<string, string> = {
+          calido: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5Doazq8PBXcXNn8FCzQM9bTy4BedivlkpsRUwm",
+          elegante: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DKQQEqDMNY9kd8fWFj7AX0DnR3VMweUBT4gHE",
+          lujoso: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5D9EyxTm2UKMLxod1C4WjAcsqSlpFmbOgtziGT",
+          clinico: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DVaY0YarmN21v3p5XSbUlezhQ7L4kwFPGZCnE",
+        };
+        content = {
+          ...content,
+          videoUrl: familiaVideos[preset.familia] ?? familiaVideos.calido,
+        };
       }
       sections.push({
         type: comp.type,
@@ -672,6 +685,8 @@ async function buildContentFromTenant(
           },
         }
       : {}),
+    ...(copy.hero.quote ? { quote: i(sub(copy.hero.quote)) } : {}),
+    ...(copy.hero.quoteAttribution ? { quoteAttribution: i(sub(copy.hero.quoteAttribution)) } : {}),
   };
 
   // --- Services ---

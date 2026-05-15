@@ -1,4 +1,22 @@
 @import 'tailwindcss' source('../');
 @source '../../../../packages/ui/src';
+@source '../../../../packages/blocks/src';
 @import '@talvu/ui/globals.css';
 @import '@fontsource-variable/roboto';
+
+.preset-isolation {
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --primary: var(--primary);
+  --primary-foreground: var(--primary-fg);
+  --accent: var(--accent);
+  --accent-foreground: var(--accent-fg);
+  --border: var(--border);
+  --card: var(--card);
+  --card-foreground: var(--card-fg);
+  --muted: var(--bg-alt);
+  --muted-foreground: var(--fg-muted);
+  --radius: var(--radius);
+  --ring: var(--primary);
+  --input: var(--border);
+}
