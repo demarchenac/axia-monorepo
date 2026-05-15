@@ -523,45 +523,65 @@ export const resolvePreview = query({
       .first();
     if (!preset) return null;
 
-    let contentMap: Record<string, Record<string, unknown>> = defaultContent;
     if (slug) {
       const tenant = await ctx.db
         .query("tenants")
         .withIndex("by_slug", (q) => q.eq("slug", slug))
         .first();
+
       if (tenant) {
-        contentMap = await buildContentFromTenant(ctx, tenant._id, preset.familia);
+        const copy = await ctx.db
+          .query("presetCopies")
+          .withIndex("by_tenant_preset", (q) =>
+            q.eq("tenantId", tenant._id).eq("presetSlug", presetSlug),
+          )
+          .first();
+
+        if (copy) {
+          return { preset, sections: copy.sections, hasCopy: true };
+        }
+
+        const contentMap = await buildContentFromTenant(ctx, tenant._id, preset.familia);
+        const sections = buildSectionsFromPreset(preset, contentMap);
+        return { preset, sections, hasCopy: false };
       }
     }
 
-    const hasVideoHero = preset.sectionComposition.some(
-      (c) => c.type === "hero" && c.variant.endsWith("-video"),
-    );
-
-    const sections = [];
-    for (const comp of preset.sectionComposition) {
-      let content = contentMap[comp.type] ?? defaultContent[comp.type] ?? {};
-      if (comp.type === "header" && hasVideoHero) {
-        content = { ...content, overlay: true };
-      }
-      if (comp.type === "hero" && comp.variant.endsWith("-video")) {
-        content = {
-          ...content,
-          videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido,
-        };
-      }
-      sections.push({
-        type: comp.type,
-        variant: comp.variant,
-        order: comp.order,
-        content,
-        visible: true,
-      });
-    }
-
-    return { preset, sections };
+    const sections = buildSectionsFromPreset(preset, defaultContent);
+    return { preset, sections, hasCopy: false };
   },
 });
+
+function buildSectionsFromPreset(
+  preset: any,
+  contentMap: Record<string, Record<string, unknown>>,
+) {
+  const hasVideoHero = preset.sectionComposition.some(
+    (c: any) => c.type === "hero" && c.variant.endsWith("-video"),
+  );
+
+  const sections = [];
+  for (const comp of preset.sectionComposition) {
+    let content = contentMap[comp.type] ?? defaultContent[comp.type] ?? {};
+    if (comp.type === "header" && hasVideoHero) {
+      content = { ...content, overlay: true };
+    }
+    if (comp.type === "hero" && comp.variant.endsWith("-video")) {
+      content = {
+        ...content,
+        videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido,
+      };
+    }
+    sections.push({
+      type: comp.type as string,
+      variant: comp.variant as string,
+      order: comp.order as number,
+      content,
+      visible: true,
+    });
+  }
+  return sections;
+}
 
 async function buildContentFromTenant(
   ctx: any,

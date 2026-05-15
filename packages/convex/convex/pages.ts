@@ -1,5 +1,45 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
+
+async function syncPresetCopy(ctx: any, pageId: Id<"tenantPages">) {
+  const page = await ctx.db.get(pageId);
+  if (!page) return;
+
+  const activeTokens = await ctx.db
+    .query("designTokens")
+    .withIndex("by_tenant_active", (q: any) =>
+      q.eq("tenantId", page.tenantId).eq("isActive", true),
+    )
+    .first();
+  if (!activeTokens?.basedOnPresetSlug) return;
+
+  const copy = await ctx.db
+    .query("presetCopies")
+    .withIndex("by_tenant_preset", (q: any) =>
+      q.eq("tenantId", page.tenantId).eq("presetSlug", activeTokens.basedOnPresetSlug),
+    )
+    .first();
+  if (!copy) return;
+
+  const sections = await ctx.db
+    .query("pageSections")
+    .withIndex("by_page_order", (q: any) => q.eq("pageId", pageId))
+    .collect();
+
+  await ctx.db.patch(copy._id, {
+    sections: sections
+      .sort((a: any, b: any) => a.order - b.order)
+      .map((s: any) => ({
+        type: s.type,
+        variant: s.variant,
+        order: s.order,
+        content: s.content,
+        visible: s.visible,
+      })),
+    updatedAt: Date.now(),
+  });
+}
 
 export const getByTenant = query({
   args: { tenantId: v.id("tenants") },
@@ -82,10 +122,11 @@ export const upsertSection = mutation({
         hiddenOnLocales: args.hiddenOnLocales,
         updatedAt: now,
       });
+      await syncPresetCopy(ctx, args.pageId);
       return args.sectionId;
     }
 
-    return ctx.db.insert("pageSections", {
+    const id = await ctx.db.insert("pageSections", {
       pageId: args.pageId,
       type: args.type,
       variant: args.variant,
@@ -96,6 +137,8 @@ export const upsertSection = mutation({
       createdAt: now,
       updatedAt: now,
     });
+    await syncPresetCopy(ctx, args.pageId);
+    return id;
   },
 });
 
@@ -110,6 +153,10 @@ export const reorderSections = mutation({
         ctx.db.patch(id, { order: index, updatedAt: now }),
       ),
     );
+    if (sectionIds.length > 0) {
+      const first = await ctx.db.get(sectionIds[0]);
+      if (first) await syncPresetCopy(ctx, first.pageId);
+    }
   },
 });
 
@@ -122,13 +169,17 @@ export const toggleVisibility = mutation({
       visible: !section.visible,
       updatedAt: Date.now(),
     });
+    await syncPresetCopy(ctx, section.pageId);
   },
 });
 
 export const deleteSection = mutation({
   args: { sectionId: v.id("pageSections") },
   handler: async (ctx, { sectionId }) => {
+    const section = await ctx.db.get(sectionId);
+    const pageId = section?.pageId;
     await ctx.db.delete(sectionId);
+    if (pageId) await syncPresetCopy(ctx, pageId);
   },
 });
 
