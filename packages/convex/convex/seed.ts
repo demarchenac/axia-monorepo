@@ -26,6 +26,7 @@ export const run = internalMutation({
       defaultLocale: "es",
       country: "CO",
       status: "active",
+      whatsappPhoneNumberId: "1039680755905145",
       hasRealLogo: false,
       hasRealPhotos: false,
       reviewRequestsEnabled: false,

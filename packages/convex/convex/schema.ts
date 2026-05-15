@@ -89,6 +89,9 @@ export default defineSchema({
       ),
     ),
 
+    whatsappPhoneNumberId: v.optional(v.string()),
+    instagramPageId: v.optional(v.string()),
+
     previewToken: v.optional(v.string()),
     previewData: v.optional(v.any()),
     previewRevokedAt: v.optional(v.number()),
@@ -109,7 +112,9 @@ export default defineSchema({
     .index("by_custom_domain", ["customDomain"])
     .index("by_workos_org", ["workosOrgId"])
     .index("by_status", ["status"])
-    .index("by_industry_status", ["industry", "status"]),
+    .index("by_industry_status", ["industry", "status"])
+    .index("by_whatsapp_phone", ["whatsappPhoneNumberId"])
+    .index("by_instagram_page", ["instagramPageId"]),
 
   // ─────────────────────────────────────────────────
   // TENANT LOCATIONS

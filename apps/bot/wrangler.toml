@@ -5,3 +5,5 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 CONVEX_URL = ""
+META_VERIFY_TOKEN = "talvu_webhook_verify_2026"
+WHATSAPP_PHONE_NUMBER_ID = "1039680755905145"

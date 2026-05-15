@@ -4,7 +4,10 @@ import { webhookRoute } from "./routes/webhook";
 
 type Bindings = {
   CONVEX_URL: string;
-  TWILIO_AUTH_TOKEN: string;
+  META_ACCESS_TOKEN: string;
+  META_APP_SECRET: string;
+  META_VERIFY_TOKEN: string;
+  WHATSAPP_PHONE_NUMBER_ID: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();

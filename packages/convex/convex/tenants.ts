@@ -11,6 +11,16 @@ export const getBySlug = query({
   },
 });
 
+export const getByWhatsAppPhoneNumberId = query({
+  args: { phoneNumberId: v.string() },
+  handler: async (ctx, { phoneNumberId }) => {
+    return ctx.db
+      .query("tenants")
+      .withIndex("by_whatsapp_phone", (q) => q.eq("whatsappPhoneNumberId", phoneNumberId))
+      .first();
+  },
+});
+
 export const list = query({
   args: {},
   handler: async (ctx) => {

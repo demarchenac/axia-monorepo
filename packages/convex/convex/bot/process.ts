@@ -42,7 +42,7 @@ export const processMessage = internalAction({
       // TODO: Replace with actual Vercel AI SDK call when configured
       // const { text } = await Promise.race([
       //   generateText({
-      //     model: google("gemini-2.5-flash-preview-04-17"),
+      //     model: google("gemini-2.5-flash"),
       //     system: systemPrompt,
       //     messages: chatMessages,
       //     tools: botTools,
@@ -75,7 +75,7 @@ export const processMessage = internalAction({
 
     // Send response via appropriate channel
     if (conversation.channel === "whatsapp" && conversation.phone) {
-      await ctx.runAction(internal.bot.twilio.sendWhatsAppMessage, {
+      await ctx.runAction(internal.bot.meta.sendWhatsAppMessage, {
         to: conversation.phone,
         body: responseText,
       });
