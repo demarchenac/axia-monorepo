@@ -4,10 +4,13 @@ import { api } from '@talvu/db'
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@talvu/ui/components/card'
 import { Badge } from '@talvu/ui/components/badge'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@talvu/ui/components/resizable'
+import { usePanelRef, type PanelSize } from 'react-resizable-panels'
 import {
   ArrowLeft, Plus, ChevronUp, ChevronDown, Eye, EyeOff, Pencil,
   Trash2, X, Loader2, Check, Monitor, Tablet, Smartphone,
   LayoutTemplate, GripVertical, Paintbrush, RotateCcw, ImagePlus, Upload,
+  PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 import { SECTION_CATALOG } from '@talvu/blocks/sections/catalog'
 import { resolve } from '@talvu/blocks/lib/content-helpers'
@@ -57,6 +60,8 @@ function EditorPage() {
   const [addingSection, setAddingSection] = useState(false)
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop')
   const [resetting, setResetting] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const sidebarRef = usePanelRef()
 
   if (!tenant || page === undefined) {
     return <div className="p-8 text-sm text-muted-foreground">Cargando...</div>
@@ -104,9 +109,20 @@ function EditorPage() {
   }
 
   return (
-    <div className="flex h-full">
+    <ResizablePanelGroup orientation="horizontal" className="h-full">
       {/* Left panel — section list */}
-      <div className="w-[480px] shrink-0 overflow-y-auto border-r p-6">
+      <ResizablePanel
+        panelRef={sidebarRef}
+        defaultSize={35}
+        minSize={20}
+        maxSize={50}
+        collapsible
+        collapsedSize={0}
+        onResize={(size: PanelSize) => {
+          setSidebarCollapsed(size.asPercentage === 0)
+        }}
+      >
+      <div className="h-full overflow-y-auto p-6">
         <div className="mb-6 flex items-center gap-3">
           <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
             <ArrowLeft className="inline size-3.5" /> Tenants
@@ -267,11 +283,30 @@ function EditorPage() {
           </>
         )}
       </div>
+      </ResizablePanel>
+
+      <ResizableHandle withHandle />
 
       {/* Right panel — live preview */}
-      <div className="flex-1 flex flex-col bg-muted/30">
+      <ResizablePanel defaultSize={65}>
+      <div className="flex h-full flex-col bg-muted/30">
         <div className="flex items-center justify-between border-b bg-background px-4 py-2">
-          <span className="text-xs font-medium text-muted-foreground">Vista previa</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (sidebarCollapsed) {
+                  sidebarRef.current?.resize({ sizePercentage: 35 })
+                } else {
+                  sidebarRef.current?.collapse()
+                }
+              }}
+              className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title={sidebarCollapsed ? 'Mostrar panel' : 'Ocultar panel'}
+            >
+              {sidebarCollapsed ? <PanelLeftOpen className="size-3.5" /> : <PanelLeftClose className="size-3.5" />}
+            </button>
+            <span className="text-xs font-medium text-muted-foreground">Vista previa</span>
+          </div>
           <div className="flex gap-1">
             {(Object.keys(previewWidths) as PreviewDevice[]).map((device) => {
               const Icon = device === 'desktop' ? Monitor : device === 'tablet' ? Tablet : Smartphone
@@ -305,7 +340,8 @@ function EditorPage() {
           </div>
         </div>
       </div>
-    </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   )
 }
 
