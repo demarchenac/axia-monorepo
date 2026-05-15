@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, Outlet, Link, useLocation } from '@tanstack/react-router'
 import { getAuth } from '@workos/authkit-tanstack-react-start'
-import { LayoutDashboard, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, Settings, LogOut, Moon, Sun } from 'lucide-react'
+import { useTheme } from '@talvu/ui/hooks/use-theme'
 
 export const Route = createFileRoute('/_authed')({
   beforeLoad: async () => {
@@ -21,6 +22,7 @@ const navItems = [
 function AuthedLayout() {
   const { user } = Route.useRouteContext()
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <div className="flex h-screen">
@@ -66,6 +68,14 @@ function AuthedLayout() {
               </p>
               <p className="truncate text-[0.6rem] text-muted-foreground">{user.email}</p>
             </div>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+            >
+              {theme === 'dark' ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
+            </button>
             <a
               href="/api/auth/signout"
               className="text-muted-foreground transition-colors hover:text-foreground"

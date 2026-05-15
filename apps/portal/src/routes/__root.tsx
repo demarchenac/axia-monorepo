@@ -29,6 +29,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="es">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`,
+          }}
+        />
       </head>
       <body className="bg-background text-foreground antialiased">
         {children}
