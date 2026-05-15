@@ -7,6 +7,13 @@ import { ScrollIndicator } from '~/components/ScrollIndicator'
 import type { ThemeTokens } from '@talvu/blocks/lib/theme-tokens'
 import type { SectionDefinition } from '@talvu/blocks/sections/types'
 
+const sectionTypeToAnchor: Record<string, string> = {
+  services: 'servicios',
+  team: 'equipo',
+  testimonials: 'testimonios',
+  'cta-contact': 'contacto',
+}
+
 type TenantData = {
   name: string
   defaultLocale: string
@@ -34,7 +41,7 @@ export const Route = createFileRoute('/t/$slug')({
       name: tenant.name,
       defaultLocale: tenant.defaultLocale,
       sections: (page?.sections ?? []).map((s: any) => ({
-        id: s._id,
+        id: sectionTypeToAnchor[s.type as string] ?? s._id,
         type: s.type,
         variant: s.variant,
         order: s.order,

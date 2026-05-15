@@ -6,6 +6,13 @@ import { TokenProvider } from '@talvu/blocks/components/TokenProvider'
 import { SectionRenderer } from '@talvu/blocks/components/SectionRenderer'
 import type { ThemeTokens } from '@talvu/blocks/lib/theme-tokens'
 
+const sectionTypeToAnchor: Record<string, string> = {
+  services: 'servicios',
+  team: 'equipo',
+  testimonials: 'testimonios',
+  'cta-contact': 'contacto',
+}
+
 export function PresetPreview({
   slug,
   presetSlug,
@@ -48,7 +55,7 @@ export function PresetPreview({
     <TokenProvider tokens={themeTokens}>
       <SectionRenderer
         sections={preview.sections.map((s, i) => ({
-          id: `preview-${i}`,
+          id: sectionTypeToAnchor[s.type] ?? `preview-${i}`,
           type: s.type,
           variant: s.variant,
           order: s.order,
