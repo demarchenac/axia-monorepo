@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@talvu/db'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@talvu/ui/components/card'
 import { Badge } from '@talvu/ui/components/badge'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@talvu/ui/components/resizable'
-import { useSidebar } from '@talvu/ui/components/sidebar'
 import {
   ArrowLeft, Plus, ChevronUp, ChevronDown, Eye, EyeOff, Pencil,
   Trash2, X, Loader2, Check, Monitor, Tablet, Smartphone,
@@ -54,12 +53,6 @@ function EditorPage() {
 
   const activePresetCopy = useQuery(api.presets.getActivePresetCopy, tenant ? { tenantId: tenant._id } : 'skip')
   const resetCopy = useMutation(api.presets.resetPresetCopy)
-
-  const { setOpen: setNavSidebarOpen } = useSidebar()
-  useEffect(() => {
-    setNavSidebarOpen(false)
-    return () => setNavSidebarOpen(true)
-  }, [setNavSidebarOpen])
 
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const [addingSection, setAddingSection] = useState(false)
@@ -118,7 +111,7 @@ function EditorPage() {
         id="editor-toolbar"
         defaultSize="50%"
         minSize="30%"
-        maxSize="65%"
+        maxSize="80%"
       >
       <div className="h-full overflow-y-auto p-6">
         <div className="mb-6 flex items-center gap-3">
@@ -286,7 +279,7 @@ function EditorPage() {
       <ResizableHandle withHandle />
 
       {/* Right panel — live preview */}
-      <ResizablePanel id="editor-preview" defaultSize="50%">
+      <ResizablePanel id="editor-preview" defaultSize="50%" minSize="20%">
       <div className="flex h-full flex-col bg-muted/30">
         <div className="flex items-center justify-between border-b bg-background px-4 py-2">
           <span className="text-xs font-medium text-muted-foreground">Vista previa</span>
