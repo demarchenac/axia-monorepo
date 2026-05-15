@@ -1466,8 +1466,15 @@ function EditorPreview({
 }) {
   const themeTokens = (tokens ?? {}) as ThemeTokens & Record<string, string>
 
+  const sectionTypeToAnchor: Record<string, string> = {
+    services: 'servicios',
+    team: 'equipo',
+    testimonials: 'testimonios',
+    'cta-contact': 'contacto',
+  }
+
   const mapped = sections.map((s) => ({
-    id: s._id,
+    id: sectionTypeToAnchor[s.type] ?? s._id,
     type: s.type,
     variant: s.variant,
     order: s.order,
@@ -1485,8 +1492,16 @@ function EditorPreview({
     e.stopPropagation()
 
     if (href.startsWith('#')) {
-      const target = e.currentTarget.querySelector(href)
-      target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const container = (e.currentTarget as HTMLElement).closest('.overflow-auto')
+      const target = container?.querySelector(href) ?? e.currentTarget.querySelector(href)
+      if (target && container) {
+        const containerRect = container.getBoundingClientRect()
+        const targetRect = target.getBoundingClientRect()
+        container.scrollTo({
+          top: container.scrollTop + targetRect.top - containerRect.top,
+          behavior: 'smooth',
+        })
+      }
     } else if (href.startsWith('http')) {
       window.open(href, '_blank', 'noopener')
     }
