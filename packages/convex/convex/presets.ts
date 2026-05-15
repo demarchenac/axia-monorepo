@@ -534,9 +534,16 @@ export const resolvePreview = query({
       }
     }
 
+    const hasVideoHero = preset.sectionComposition.some(
+      (c) => c.type === "hero" && c.variant.endsWith("-video"),
+    );
+
     const sections = [];
     for (const comp of preset.sectionComposition) {
       let content = contentMap[comp.type] ?? defaultContent[comp.type] ?? {};
+      if (comp.type === "header" && hasVideoHero) {
+        content = { ...content, overlay: true };
+      }
       if (comp.type === "hero" && comp.variant.endsWith("-video")) {
         content = {
           ...content,
@@ -858,6 +865,10 @@ export const applyToTenant = mutation({
       });
     }
 
+    const hasVideoHero = preset.sectionComposition.some(
+      (c) => c.type === "hero" && c.variant.endsWith("-video"),
+    );
+
     for (const comp of preset.sectionComposition) {
       let content: Record<string, unknown> = {};
 
@@ -878,14 +889,11 @@ export const applyToTenant = mutation({
         content = tenantContent[comp.type] ?? defaultContent[comp.type] ?? {};
       }
 
+      if (comp.type === "header" && hasVideoHero) {
+        content = { ...content, overlay: true };
+      }
       if (comp.type === "hero" && comp.variant.endsWith("-video")) {
-        const familiaVideos: Record<string, string> = {
-          calido: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5Doazq8PBXcXNn8FCzQM9bTy4BedivlkpsRUwm",
-          elegante: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DKQQEqDMNY9kd8fWFj7AX0DnR3VMweUBT4gHE",
-          lujoso: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5D9EyxTm2UKMLxod1C4WjAcsqSlpFmbOgtziGT",
-          clinico: "https://uto3ti0wqm.ufs.sh/f/W7XvdHwCCg5DVaY0YarmN21v3p5XSbUlezhQ7L4kwFPGZCnE",
-        };
-        content = { ...content, videoUrl: familiaVideos[preset.familia] ?? familiaVideos.calido };
+        content = { ...content, videoUrl: FAMILIA_VIDEOS[preset.familia] ?? FAMILIA_VIDEOS.calido };
       }
 
       await ctx.db.insert("pageSections", {

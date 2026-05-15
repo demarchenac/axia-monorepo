@@ -17,6 +17,44 @@ interface ClinicoHeaderContent extends HeaderContent {
 }
 
 export function HeaderClinico({ content, locale }: SectionProps<ClinicoHeaderContent>) {
+  if (content.overlay) {
+    return (
+      <header className="absolute top-0 left-0 right-0 z-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-white/15 backdrop-blur flex items-center justify-center text-white font-bold text-lg">
+              {content.clinicName[0]}
+            </div>
+            <div>
+              <div className="font-semibold text-lg leading-tight text-white">{content.clinicName}</div>
+              {content.doctorName && (
+                <div className="text-[10px] uppercase tracking-wider text-white/50">
+                  {content.doctorName}
+                </div>
+              )}
+            </div>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
+            {content.navItems.map((item) => (
+              <a key={item.href} href={item.href} className="hover:text-white">
+                {resolve(item.label, locale)}
+              </a>
+            ))}
+          </nav>
+          {content.ctaLabel && (
+            <a
+              href={content.ctaHref ?? '#contacto'}
+              className="inline-flex items-center h-9 px-4 text-sm border border-white/30 text-white hover:bg-white/10 transition-all font-medium"
+              style={{ borderRadius: 'var(--radius)' }}
+            >
+              {resolve(content.ctaLabel, locale)}
+            </a>
+          )}
+        </div>
+      </header>
+    )
+  }
+
   return (
     <>
       {content.topBar && (
