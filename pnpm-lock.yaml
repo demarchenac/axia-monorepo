@@ -151,6 +151,9 @@ importers:
       '@fontsource-variable/roboto':
         specifier: ^5.2.10
         version: 5.2.10
+      '@talvu/blocks':
+        specifier: workspace:*
+        version: link:../../packages/blocks
       '@talvu/db':
         specifier: workspace:*
         version: link:../../packages/convex

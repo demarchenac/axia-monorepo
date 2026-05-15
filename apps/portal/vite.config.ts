@@ -12,7 +12,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   ssr: {
-    noExternal: ['@talvu/db'],
+    noExternal: ['@talvu/db', '@talvu/blocks'],
   },
   plugins: [
     tailwindcss(),

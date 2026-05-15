@@ -132,6 +132,26 @@ export const deleteSection = mutation({
   },
 });
 
+export const updateSectionContent = mutation({
+  args: {
+    sectionId: v.id("pageSections"),
+    content: v.any(),
+  },
+  handler: async (ctx, { sectionId, content }) => {
+    await ctx.db.patch(sectionId, { content, updatedAt: Date.now() });
+  },
+});
+
+export const updateSectionVariant = mutation({
+  args: {
+    sectionId: v.id("pageSections"),
+    variant: v.string(),
+  },
+  handler: async (ctx, { sectionId, variant }) => {
+    await ctx.db.patch(sectionId, { variant, updatedAt: Date.now() });
+  },
+});
+
 export const applyFullPage = mutation({
   args: {
     tenantId: v.id("tenants"),

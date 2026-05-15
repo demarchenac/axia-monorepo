@@ -12,6 +12,7 @@
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",
     "@fontsource-variable/roboto": "^5.2.10",
+    "@talvu/blocks": "workspace:*",
     "@talvu/db": "workspace:*",
     "@talvu/ui": "workspace:*",
     "@tanstack/react-query": "^5.99.2",

@@ -18,6 +18,7 @@ import { Route as AuthedTenantsNewRouteImport } from './routes/_authed/tenants.n
 import { Route as AuthedTenantsSlugRouteImport } from './routes/_authed/tenants.$slug'
 import { Route as AuthedTenantsSlugPresetsRouteImport } from './routes/_authed/tenants_.$slug_.presets'
 import { Route as AuthedTenantsSlugLocationsRouteImport } from './routes/_authed/tenants_.$slug_.locations'
+import { Route as AuthedTenantsSlugEditorRouteImport } from './routes/_authed/tenants_.$slug_.editor'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -65,6 +66,11 @@ const AuthedTenantsSlugLocationsRoute =
     path: '/tenants/$slug/locations',
     getParentRoute: () => AuthedRoute,
   } as any)
+const AuthedTenantsSlugEditorRoute = AuthedTenantsSlugEditorRouteImport.update({
+  id: '/tenants_/$slug_/editor',
+  path: '/tenants/$slug/editor',
+  getParentRoute: () => AuthedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/tenants/$slug/editor': typeof AuthedTenantsSlugEditorRoute
   '/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
   '/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
 }
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/tenants/$slug/editor': typeof AuthedTenantsSlugEditorRoute
   '/tenants/$slug/locations': typeof AuthedTenantsSlugLocationsRoute
   '/tenants/$slug/presets': typeof AuthedTenantsSlugPresetsRoute
 }
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/_authed/tenants/new': typeof AuthedTenantsNewRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/_authed/tenants_/$slug_/editor': typeof AuthedTenantsSlugEditorRoute
   '/_authed/tenants_/$slug_/locations': typeof AuthedTenantsSlugLocationsRoute
   '/_authed/tenants_/$slug_/presets': typeof AuthedTenantsSlugPresetsRoute
 }
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/tenants/$slug/editor'
     | '/tenants/$slug/locations'
     | '/tenants/$slug/presets'
   fileRoutesByTo: FileRoutesByTo
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/tenants/$slug/editor'
     | '/tenants/$slug/locations'
     | '/tenants/$slug/presets'
   id:
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_authed/tenants/new'
     | '/api/auth/callback'
     | '/api/auth/signout'
+    | '/_authed/tenants_/$slug_/editor'
     | '/_authed/tenants_/$slug_/locations'
     | '/_authed/tenants_/$slug_/presets'
   fileRoutesById: FileRoutesById
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedTenantsSlugLocationsRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/tenants_/$slug_/editor': {
+      id: '/_authed/tenants_/$slug_/editor'
+      path: '/tenants/$slug/editor'
+      fullPath: '/tenants/$slug/editor'
+      preLoaderRoute: typeof AuthedTenantsSlugEditorRouteImport
+      parentRoute: typeof AuthedRoute
+    }
   }
 }
 
@@ -211,6 +230,7 @@ interface AuthedRouteChildren {
   AuthedIndexRoute: typeof AuthedIndexRoute
   AuthedTenantsSlugRoute: typeof AuthedTenantsSlugRoute
   AuthedTenantsNewRoute: typeof AuthedTenantsNewRoute
+  AuthedTenantsSlugEditorRoute: typeof AuthedTenantsSlugEditorRoute
   AuthedTenantsSlugLocationsRoute: typeof AuthedTenantsSlugLocationsRoute
   AuthedTenantsSlugPresetsRoute: typeof AuthedTenantsSlugPresetsRoute
 }
@@ -219,6 +239,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedIndexRoute: AuthedIndexRoute,
   AuthedTenantsSlugRoute: AuthedTenantsSlugRoute,
   AuthedTenantsNewRoute: AuthedTenantsNewRoute,
+  AuthedTenantsSlugEditorRoute: AuthedTenantsSlugEditorRoute,
   AuthedTenantsSlugLocationsRoute: AuthedTenantsSlugLocationsRoute,
   AuthedTenantsSlugPresetsRoute: AuthedTenantsSlugPresetsRoute,
 }
