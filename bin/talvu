@@ -29,6 +29,8 @@ usage() {
   echo -e "  ${CYAN}db:run${RESET} <fn>          Ejecuta una función de Convex (ej: db:run tenants:list)"
   echo -e "  ${CYAN}db:dashboard${RESET}         Abre el dashboard de Convex"
   echo ""
+  echo -e "  ${CYAN}assets:upload-video${RESET}   Descarga video de Pexels y lo sube a UploadThing"
+  echo ""
   echo -e "  ${CYAN}build${RESET}                Build de todos los packages"
   echo -e "  ${CYAN}typecheck${RESET}            Typecheck de todos los packages"
   echo ""
@@ -92,6 +94,12 @@ case "${1:-help}" in
     ;;
   db:dashboard)
     cd "$CONVEX_DIR" && npx convex dashboard
+    ;;
+  assets:upload-video)
+    shift
+    source "$ROOT/.env.local" 2>/dev/null || true
+    export PEXELS_API_KEY UPLOADTHING_TOKEN
+    cd "$ROOT" && npx tsx scripts/pexels-to-uploadthing.ts "$@"
     ;;
   build)
     cd "$ROOT" && pnpm build

@@ -21,9 +21,10 @@
     "@types/node": "^22.19.17",
     "conventional-changelog-cli": "^5.0.0",
     "husky": "^9.1.7",
+    "tsx": "^4.22.0",
     "turbo": "latest",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "uploadthing": "^7.7.4"
   },
-  "packageManager": "pnpm@10.28.0",
-  "dependencies": {}
+  "packageManager": "pnpm@10.28.0"
 }
