@@ -21,6 +21,7 @@ usage() {
   echo -e "  ${CYAN}dev:portal${RESET}           Solo el portal admin (:3001)"
   echo -e "  ${CYAN}dev:db${RESET}               Solo Convex dev server"
   echo ""
+  echo -e "  ${CYAN}db:reseed${RESET}            Limpia la DB y re-seedea todo desde cero"
   echo -e "  ${CYAN}db:seed${RESET}              Seed completo (tenant Axia + presets)"
   echo -e "  ${CYAN}db:seed:tenant${RESET}       Seed solo tenant Axia"
   echo -e "  ${CYAN}db:seed:presets${RESET}      Seed solo presets de diseño"
@@ -53,6 +54,17 @@ case "${1:-help}" in
     ;;
   dev:db)
     cd "$CONVEX_DIR" && npx convex dev
+    ;;
+  db:reseed)
+    log "Limpiando DB..."
+    convex_run seed:reset
+    log "Seeding tenant Axia..."
+    convex_run seed:run
+    log "Seeding presets..."
+    convex_run seedPresets:run
+    log "Aplicando preset calido-melocoton a Axia..."
+    convex_run seed:applyDefaultPreset
+    log "Re-seed completo ✓"
     ;;
   db:seed)
     log "Seeding tenant Axia..."
